@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import CreateContactModal from "@/components/organisms/CreateContactModal";
+import CreateLeadModal from "@/components/organisms/CreateLeadModal";
 import { toast } from "react-toastify";
 import { format } from "date-fns";
 import ApperIcon from "@/components/ApperIcon";
@@ -24,6 +25,7 @@ const ContactsList = () => {
   const [filteredContacts, setFilteredContacts] = useState([]);
   const [selectedContact, setSelectedContact] = useState(null);
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showCreateLeadModal, setShowCreateLeadModal] = useState(false);
   useEffect(() => {
     loadContacts();
   }, []);
@@ -297,12 +299,10 @@ const filters = [
                 <ApperIcon name="Phone" className="h-4 w-4 mr-2" />
                 Call
               </Button>
-              <Button 
+<Button 
                 variant="secondary" 
                 className="w-full"
-                onClick={() => {
-                  toast.info('Add to Pipeline functionality coming soon!');
-                }}
+                onClick={() => setShowCreateLeadModal(true)}
               >
                 <ApperIcon name="GitBranch" className="h-4 w-4 mr-2" />
                 Add to Pipeline
@@ -316,9 +316,24 @@ const filters = [
       </div>
     )}
       
-      <CreateContactModal 
+<CreateContactModal 
         isOpen={showCreateModal} 
         onClose={() => setShowCreateModal(false)} 
+      />
+      
+      <CreateLeadModal 
+        isOpen={showCreateLeadModal} 
+        onClose={() => setShowCreateLeadModal(false)}
+        onSuccess={() => {
+          setShowCreateLeadModal(false);
+          toast.success('Lead created successfully from contact!');
+        }}
+        initialData={selectedContact ? {
+          name: selectedContact.Name,
+          company: selectedContact.company,
+          email: selectedContact.email,
+          phone: selectedContact.phone
+        } : undefined}
       />
     </div>
   );

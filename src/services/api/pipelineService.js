@@ -369,7 +369,70 @@ export const pipelineService = {
     }
   },
 
-  async getAll() {
+async getAll() {
     return this.getLeads();
+  },
+
+  async updateMultiplePipelines(pipelineUpdates) {
+    try {
+      const { ApperClient } = window.ApperSDK;
+      const apperClient = new ApperClient({
+        apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
+        apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
+      });
+
+      // Prepare updateable data for each pipeline
+      const updateableRecords = pipelineUpdates.map(pipeline => ({
+        Id: parseInt(pipeline.Id),
+        Name: pipeline.name || pipeline.Name,
+        Tags: Array.isArray(pipeline.tags) ? pipeline.tags.join(',') : pipeline.Tags,
+        stages: pipeline.stages,
+        color: pipeline.color,
+        is_default: pipeline.is_default
+      }));
+
+      const params = {
+        records: updateableRecords
+      };
+
+      const response = await apperClient.updateRecord("pipeline", params);
+      
+      if (!response.success) {
+        console.error(response.message);
+        toast.error(response.message);
+        return [];
+      }
+
+      if (response.results) {
+        const successfulUpdates = response.results.filter(result => result.success);
+        const failedUpdates = response.results.filter(result => !result.success);
+        
+        if (failedUpdates.length > 0) {
+          console.error(`Failed to update pipelines ${failedUpdates.length} records:${JSON.stringify(failedUpdates)}`);
+          
+          failedUpdates.forEach(record => {
+            record.errors?.forEach(error => {
+              toast.error(`${error.fieldLabel}: ${error.message}`);
+            });
+            if (record.message) toast.error(record.message);
+          });
+        }
+        
+        if (successfulUpdates.length > 0) {
+          toast.success(`Successfully updated ${successfulUpdates.length} pipeline(s)`);
+        }
+        
+        return successfulUpdates.map(result => result.data);
+      }
+
+      return [];
+    } catch (error) {
+      if (error?.response?.data?.message) {
+        console.error("Error updating multiple pipelines:", error?.response?.data?.message);
+      } else {
+        console.error(error.message);
+      }
+      return [];
+    }
   }
 };

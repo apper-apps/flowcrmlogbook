@@ -1,32 +1,32 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 import ApperIcon from "@/components/ApperIcon";
 import Card from "@/components/atoms/Card";
-import Button from "@/components/atoms/Button";
-import Input from "@/components/atoms/Input";
-import Textarea from "@/components/atoms/Textarea";
 import Select from "@/components/atoms/Select";
+import Textarea from "@/components/atoms/Textarea";
+import Input from "@/components/atoms/Input";
+import Button from "@/components/atoms/Button";
+import { useLanguage } from "@/hooks/useLanguage";
 import { pipelineService } from "@/services/api/pipelineService";
 import { addLead } from "@/store/slices/pipelineSlice";
-import { useLanguage } from "@/hooks/useLanguage";
 
-const CreateLeadModal = ({ isOpen, onClose, onSuccess, onStart }) => {
+const CreateLeadModal = ({ isOpen, onClose, onSuccess, onStart, initialData }) => {
   const dispatch = useDispatch();
   const { t } = useLanguage();
-  const [loading, setLoading] = useState(false);
-  const [formData, setFormData] = useState({
-    name: "",
-    company: "",
-    email: "",
-    phone: "",
+const [loading, setLoading] = useState(false);
+  const [formData, setFormData] = useState(() => ({
+    name: initialData?.name || "",
+    company: initialData?.company || "",
+    email: initialData?.email || "",
+    phone: initialData?.phone || "",
     value: "",
     stage: "new",
     source: "website",
     owner: "",
     tags: "",
     notes: ""
-  });
+  }));
 
   const stageOptions = [
     { value: "new", label: "New" },
@@ -66,7 +66,7 @@ setLoading(true);
       onStart();
     }
     try {
-const leadData = {
+      const leadData = {
         name: formData.name,
         company: formData.company,
         email: formData.email,
@@ -81,7 +81,7 @@ const newLead = await pipelineService.create(leadData);
       if (newLead) {
         dispatch(addLead(newLead));
         setFormData({
-        name: "",
+          name: "",
         company: "",
         email: "",
         phone: "",
@@ -89,8 +89,8 @@ const newLead = await pipelineService.create(leadData);
         stage: "new",
         source: "website",
         owner: "",
-        tags: "",
-notes: ""
+tags: "",
+        notes: ""
       });
         onClose();
         if (onSuccess) {
