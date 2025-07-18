@@ -1,26 +1,29 @@
-import { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setDocuments, setLoading, setError } from "@/store/slices/documentsSlice";
-import { setSectionFilters } from "@/store/slices/uiSlice";
-import { documentsService } from "@/services/api/documentsService";
-import ApperIcon from "@/components/ApperIcon";
-import Button from "@/components/atoms/Button";
-import Card from "@/components/atoms/Card";
-import Badge from "@/components/atoms/Badge";
-import StatCard from "@/components/molecules/StatCard";
-import ListView from "@/components/molecules/ListView";
-import Loading from "@/components/ui/Loading";
-import Error from "@/components/ui/Error";
-import Empty from "@/components/ui/Empty";
-import { useLanguage } from "@/hooks/useLanguage";
 import { toast } from "react-toastify";
 import { format } from "date-fns";
+import ApperIcon from "@/components/ApperIcon";
+import Empty from "@/components/ui/Empty";
+import Error from "@/components/ui/Error";
+import Loading from "@/components/ui/Loading";
+import PipelineBoard from "@/components/organisms/PipelineBoard";
+import Pipeline from "@/components/pages/Pipeline";
+import StatCard from "@/components/molecules/StatCard";
+import ListView from "@/components/molecules/ListView";
+import Card from "@/components/atoms/Card";
+import Badge from "@/components/atoms/Badge";
+import Button from "@/components/atoms/Button";
+import { useLanguage } from "@/hooks/useLanguage";
+import { documentsService } from "@/services/api/documentsService";
+import { setSectionFilters } from "@/store/slices/uiSlice";
+import { setDocuments, setError, setLoading } from "@/store/slices/documentsSlice";
 
 const Documents = () => {
 const dispatch = useDispatch();
   const { documents, loading, error } = useSelector((state) => state.documents);
   const { sectionFilters } = useSelector((state) => state.ui.listView);
   const { t } = useLanguage();
+  const [showPipelineView, setShowPipelineView] = useState(false);
 
   useEffect(() => {
     loadDocuments();
@@ -157,7 +160,7 @@ const dispatch = useDispatch();
     );
   }
 
-  return (
+return (
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
@@ -168,6 +171,13 @@ const dispatch = useDispatch();
           </p>
         </div>
         <div className="flex items-center gap-4">
+          <Button 
+            variant={showPipelineView ? "primary" : "outline"}
+            onClick={() => setShowPipelineView(!showPipelineView)}
+          >
+            <ApperIcon name="BarChart3" className="h-4 w-4 mr-2" />
+            Pipeline View
+          </Button>
           <Button variant="outline">
             <ApperIcon name="Upload" className="h-4 w-4 mr-2" />
             Import
@@ -179,57 +189,63 @@ const dispatch = useDispatch();
         </div>
       </div>
 
-      {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <StatCard
-          title="Total Documents"
-          value={documents.length}
-          icon="FileText"
-          trend="up"
-          trendValue="+12"
-        />
-        <StatCard
-          title="Sent Documents"
-          value={getDocumentsByStatus("sent")}
-          icon="Send"
-          trend="up"
-          trendValue="+5"
-        />
-        <StatCard
-          title="Signed Documents"
-          value={getDocumentsByStatus("signed")}
-          icon="FileCheck"
-          trend="up"
-          trendValue="+3"
-        />
-        <StatCard
-          title="Completion Rate"
-          value={`${documents.length > 0 ? ((getDocumentsByStatus("signed") / documents.length) * 100).toFixed(1) : 0}%`}
-          icon="TrendingUp"
-          trend="up"
-          trendValue="+2.5%"
-        />
-      </div>
+      {showPipelineView ? (
+        <PipelineBoard />
+      ) : (
+        <>
+          {/* Stats */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <StatCard
+              title="Total Documents"
+              value={documents.length}
+              icon="FileText"
+              trend="up"
+              trendValue="+12"
+            />
+            <StatCard
+              title="Sent Documents"
+              value={getDocumentsByStatus("sent")}
+              icon="Send"
+              trend="up"
+              trendValue="+5"
+            />
+            <StatCard
+              title="Signed Documents"
+              value={getDocumentsByStatus("signed")}
+              icon="FileCheck"
+              trend="up"
+              trendValue="+3"
+            />
+            <StatCard
+              title="Completion Rate"
+              value={`${documents.length > 0 ? ((getDocumentsByStatus("signed") / documents.length) * 100).toFixed(1) : 0}%`}
+              icon="TrendingUp"
+              trend="up"
+              trendValue="+2.5%"
+            />
+          </div>
 
-{/* Documents List */}
-      <ListView
-        items={documents}
-        renderItem={renderDocumentItem}
-        filters={filters}
-        section="documents"
-        onFilterChange={handleFilterChange}
-        selectedFilters={sectionFilters.documents}
-        emptyState={
-          <Empty
-            icon="FileText"
-            title="No documents yet"
-            description="Create your first document to start building professional proposals and contracts"
-            actionLabel="Create Document"
-            onAction={() => toast.info("Document creation coming soon!")}
+          {/* Documents List */}
+          <ListView
+            items={documents}
+            renderItem={renderDocumentItem}
+            filters={filters}
+            section="documents"
+            onFilterChange={handleFilterChange}
+            selectedFilters={sectionFilters.documents}
+            emptyState={
+              <Empty
+                icon="FileText"
+                title="No documents yet"
+                description="Create your first document to start building professional proposals and contracts"
+                actionLabel="Create Document"
+                onAction={() => toast.info("Document creation coming soon!")}
+              />
+            }
           />
-        }
-      />
-    </div>
+        </>
+      )}
+</div>
   );
 };
 

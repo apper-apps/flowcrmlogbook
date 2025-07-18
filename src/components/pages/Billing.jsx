@@ -1,26 +1,28 @@
-import { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setInvoices, setLoading, setError } from "@/store/slices/billingSlice";
-import { setSectionFilters } from "@/store/slices/uiSlice";
-import { billingService } from "@/services/api/billingService";
-import ApperIcon from "@/components/ApperIcon";
-import Button from "@/components/atoms/Button";
-import Card from "@/components/atoms/Card";
-import Badge from "@/components/atoms/Badge";
-import StatCard from "@/components/molecules/StatCard";
-import ListView from "@/components/molecules/ListView";
-import Loading from "@/components/ui/Loading";
-import Error from "@/components/ui/Error";
-import Empty from "@/components/ui/Empty";
-import { useLanguage } from "@/hooks/useLanguage";
 import { toast } from "react-toastify";
 import { format } from "date-fns";
-
+import ApperIcon from "@/components/ApperIcon";
+import Empty from "@/components/ui/Empty";
+import Error from "@/components/ui/Error";
+import Loading from "@/components/ui/Loading";
+import PipelineBoard from "@/components/organisms/PipelineBoard";
+import Pipeline from "@/components/pages/Pipeline";
+import StatCard from "@/components/molecules/StatCard";
+import ListView from "@/components/molecules/ListView";
+import Card from "@/components/atoms/Card";
+import Badge from "@/components/atoms/Badge";
+import Button from "@/components/atoms/Button";
+import useLanguage from "@/hooks/useLanguage";
+import { billingService } from "@/services/api/billingService";
+import { setSectionFilters } from "@/store/slices/uiSlice";
+import { setError, setInvoices, setLoading } from "@/store/slices/billingSlice";
 const Billing = () => {
-const dispatch = useDispatch();
+  const dispatch = useDispatch();
   const { invoices, loading, error } = useSelector((state) => state.billing);
   const { sectionFilters } = useSelector((state) => state.ui.listView);
   const { t } = useLanguage();
+  const [showPipelineView, setShowPipelineView] = useState(false);
 
   useEffect(() => {
     loadInvoices();
@@ -192,7 +194,7 @@ const dispatch = useDispatch();
         onAction={() => toast.info("Invoice creation coming soon!")}
       />
     );
-  }
+}
 
   return (
     <div className="space-y-6">
@@ -205,6 +207,13 @@ const dispatch = useDispatch();
           </p>
         </div>
         <div className="flex items-center gap-4">
+          <Button 
+            variant={showPipelineView ? "primary" : "outline"}
+            onClick={() => setShowPipelineView(!showPipelineView)}
+          >
+            <ApperIcon name="BarChart3" className="h-4 w-4 mr-2" />
+            Pipeline View
+          </Button>
           <Button variant="outline">
             <ApperIcon name="Download" className="h-4 w-4 mr-2" />
             Export
@@ -216,56 +225,62 @@ const dispatch = useDispatch();
         </div>
       </div>
 
-      {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <StatCard
-          title="Total Revenue"
-          value={formatCurrency(getTotalRevenue())}
-          icon="DollarSign"
-          trend="up"
-          trendValue="+12.5%"
-        />
-        <StatCard
-          title="Pending Payments"
-          value={formatCurrency(getPendingAmount())}
-          icon="Clock"
-          trend="up"
-          trendValue="+8.3%"
-        />
-        <StatCard
-          title="Overdue Amount"
-          value={formatCurrency(getOverdueAmount())}
-          icon="AlertCircle"
-          trend="down"
-          trendValue="-2.1%"
-        />
-        <StatCard
-          title="Total Invoices"
-          value={invoices.length}
-          icon="FileText"
-          trend="up"
-          trendValue="+5"
-        />
-      </div>
+      {showPipelineView ? (
+        <PipelineBoard />
+      ) : (
+        <>
+          {/* Stats */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <StatCard
+              title="Total Revenue"
+              value={formatCurrency(getTotalRevenue())}
+              icon="DollarSign"
+              trend="up"
+              trendValue="+12.5%"
+            />
+            <StatCard
+              title="Pending Payments"
+              value={formatCurrency(getPendingAmount())}
+              icon="Clock"
+              trend="up"
+              trendValue="+8.3%"
+            />
+            <StatCard
+              title="Overdue Amount"
+              value={formatCurrency(getOverdueAmount())}
+              icon="AlertCircle"
+              trend="down"
+              trendValue="-2.1%"
+            />
+            <StatCard
+              title="Total Invoices"
+              value={invoices.length}
+              icon="FileText"
+              trend="up"
+              trendValue="+5"
+            />
+          </div>
 
-{/* Invoices List */}
-      <ListView
-        items={invoices}
-        renderItem={renderInvoiceItem}
-        filters={filters}
-        section="billing"
-        onFilterChange={handleFilterChange}
-        selectedFilters={sectionFilters.billing}
-        emptyState={
-          <Empty
-            icon="CreditCard"
-            title="No invoices yet"
-            description="Create your first invoice to start tracking payments and revenue"
-            actionLabel="Create Invoice"
-            onAction={() => toast.info("Invoice creation coming soon!")}
+          {/* Invoices List */}
+          <ListView
+            items={invoices}
+            renderItem={renderInvoiceItem}
+            filters={filters}
+            section="billing"
+            onFilterChange={handleFilterChange}
+            selectedFilters={sectionFilters.billing}
+            emptyState={
+              <Empty
+                icon="CreditCard"
+                title="No invoices yet"
+                description="Create your first invoice to start tracking payments and revenue"
+                actionLabel="Create Invoice"
+                onAction={() => toast.info("Invoice creation coming soon!")}
+              />
+            }
           />
-        }
-      />
+        </>
+      )}
     </div>
   );
 };

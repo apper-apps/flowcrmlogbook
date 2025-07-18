@@ -1,20 +1,24 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setLanguage } from "@/store/slices/uiSlice";
-import ApperIcon from "@/components/ApperIcon";
-import Button from "@/components/atoms/Button";
-import Card from "@/components/atoms/Card";
-import Input from "@/components/atoms/Input";
-import Select from "@/components/atoms/Select";
-import Badge from "@/components/atoms/Badge";
-import { useLanguage } from "@/hooks/useLanguage";
 import { toast } from "react-toastify";
+import ApperIcon from "@/components/ApperIcon";
+import PipelineBoard from "@/components/organisms/PipelineBoard";
+import Pipeline from "@/components/pages/Pipeline";
+import Billing from "@/components/pages/Billing";
+import Card from "@/components/atoms/Card";
+import Select from "@/components/atoms/Select";
+import Input from "@/components/atoms/Input";
+import Badge from "@/components/atoms/Badge";
+import Button from "@/components/atoms/Button";
+import useLanguage from "@/hooks/useLanguage";
+import { setLanguage } from "@/store/slices/uiSlice";
 
 const Settings = () => {
   const dispatch = useDispatch();
   const { language } = useSelector((state) => state.ui);
   const { t } = useLanguage();
   const [activeTab, setActiveTab] = useState("general");
+  const [showPipelineView, setShowPipelineView] = useState(false);
 
   const tabs = [
     { id: "general", label: "General", icon: "Settings" },
@@ -317,7 +321,7 @@ const Settings = () => {
     </div>
   );
 
-  return (
+return (
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
@@ -327,43 +331,69 @@ const Settings = () => {
             Configure your CRM preferences and integrations
           </p>
         </div>
-      </div>
-
-      {/* Settings Content */}
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-        {/* Sidebar */}
-        <div className="lg:col-span-1">
-          <Card className="p-4">
-            <nav className="space-y-2">
-              {tabs.map((tab) => (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
-                  className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-                    activeTab === tab.id
-                      ? "bg-gradient-to-r from-primary/20 to-secondary/20 text-primary border border-primary/20"
-                      : "text-gray-400 hover:text-white hover:bg-white/5"
-                  }`}
-                >
-                  <ApperIcon name={tab.icon} className="h-4 w-4" />
-                  {tab.label}
-                </button>
-              ))}
-            </nav>
-          </Card>
-        </div>
-
-        {/* Content */}
-        <div className="lg:col-span-3">
-          {activeTab === "general" && renderGeneralSettings()}
-          {activeTab === "integrations" && renderIntegrations()}
-          {activeTab === "notifications" && renderNotifications()}
-          {activeTab === "team" && renderTeamSettings()}
-          {activeTab === "billing" && renderBillingSettings()}
+        <div className="flex items-center gap-4">
+          <Button 
+            variant={showPipelineView ? "primary" : "outline"}
+            onClick={() => setShowPipelineView(!showPipelineView)}
+          >
+            <ApperIcon name="BarChart3" className="h-4 w-4 mr-2" />
+            Pipeline View
+          </Button>
         </div>
       </div>
+
+      {showPipelineView ? (
+        <PipelineBoard />
+      ) : (
+        <>
+          {/* Settings Content */}
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+            {/* Sidebar */}
+            <div className="lg:col-span-1">
+              <Card className="p-4">
+                <nav className="space-y-2">
+                  {tabs.map((tab) => (
+                    <button
+                      key={tab.id}
+                      onClick={() => setActiveTab(tab.id)}
+                      className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                        activeTab === tab.id
+                          ? "bg-gradient-to-r from-primary/20 to-secondary/20 text-primary border border-primary/20"
+                          : "text-gray-400 hover:text-white hover:bg-white/5"
+                      }`}
+                    >
+                      <ApperIcon name={tab.icon} className="h-4 w-4" />
+                      {tab.label}
+                    </button>
+                  ))}
+                </nav>
+              </Card>
+            </div>
+
+            {/* Content */}
+            <div className="lg:col-span-3">
+              {activeTab === "general" && renderGeneralSettings()}
+              {activeTab === "integrations" && renderIntegrations()}
+              {activeTab === "notifications" && renderNotifications()}
+              {activeTab === "team" && renderTeamSettings()}
+              {activeTab === "billing" && renderBillingSettings()}
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
+</div>
+        <div className="flex items-center gap-4">
+          <Button 
+            variant={showPipelineView ? "primary" : "outline"}
+            onClick={() => setShowPipelineView(!showPipelineView)}
+          >
+            <ApperIcon name="BarChart3" className="h-4 w-4 mr-2" />
+            Pipeline View
+          </Button>
+        </div>
+      </div>
 };
 
 export default Settings;

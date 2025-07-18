@@ -51,6 +51,11 @@ export const pipelineService = {
       mockLeads.splice(index, 1);
       return true;
     }
-    throw new Error("Lead not found");
+throw new Error("Lead not found");
+  },
+
+  async getAll() {
+    await new Promise(resolve => setTimeout(resolve, 300));
+    return [...mockLeads];
   }
 };

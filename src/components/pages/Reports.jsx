@@ -1,12 +1,15 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
+import Chart from "react-apexcharts";
 import ApperIcon from "@/components/ApperIcon";
-import Button from "@/components/atoms/Button";
+import PipelineBoard from "@/components/organisms/PipelineBoard";
+import Pipeline from "@/components/pages/Pipeline";
+import Contacts from "@/components/pages/Contacts";
+import StatCard from "@/components/molecules/StatCard";
 import Card from "@/components/atoms/Card";
 import Select from "@/components/atoms/Select";
-import StatCard from "@/components/molecules/StatCard";
+import Button from "@/components/atoms/Button";
 import { useLanguage } from "@/hooks/useLanguage";
-import Chart from "react-apexcharts";
 
 const Reports = () => {
   const { leads } = useSelector((state) => state.pipeline);
@@ -14,6 +17,7 @@ const Reports = () => {
   const { invoices } = useSelector((state) => state.billing);
   const { t } = useLanguage();
   const [timeRange, setTimeRange] = useState("30");
+  const [showPipelineView, setShowPipelineView] = useState(false);
 
   // Pipeline Conversion Chart
   const pipelineData = {
@@ -156,7 +160,7 @@ const Reports = () => {
     };
   };
 
-  const metrics = calculateMetrics();
+const metrics = calculateMetrics();
 
   return (
     <div className="space-y-6">
@@ -169,6 +173,13 @@ const Reports = () => {
           </p>
         </div>
         <div className="flex items-center gap-4">
+          <Button 
+            variant={showPipelineView ? "primary" : "outline"}
+            onClick={() => setShowPipelineView(!showPipelineView)}
+          >
+            <ApperIcon name="BarChart3" className="h-4 w-4 mr-2" />
+            Pipeline View
+          </Button>
           <Select value={timeRange} onChange={(e) => setTimeRange(e.target.value)}>
             <option value="7">Last 7 days</option>
             <option value="30">Last 30 days</option>
@@ -182,135 +193,141 @@ const Reports = () => {
         </div>
       </div>
 
-      {/* Key Metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <StatCard
-          title="Total Revenue"
-          value={`$${metrics.totalRevenue.toLocaleString()}`}
-          icon="DollarSign"
-          trend="up"
-          trendValue="+12.5%"
-        />
-        <StatCard
-          title="Conversion Rate"
-          value={`${metrics.conversionRate.toFixed(1)}%`}
-          icon="TrendingUp"
-          trend="up"
-          trendValue="+2.3%"
-        />
-        <StatCard
-          title="Avg Deal Size"
-          value={`$${metrics.avgDealSize.toLocaleString()}`}
-          icon="Target"
-          trend="up"
-          trendValue="+8.2%"
-        />
-        <StatCard
-          title="Total Leads"
-          value={metrics.totalLeads}
-          icon="Users"
-          trend="up"
-          trendValue="+15"
-        />
-      </div>
-
-      {/* Charts */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Pipeline Conversion */}
-        <Card className="p-6">
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="text-lg font-semibold text-white">Pipeline Conversion</h3>
-            <ApperIcon name="BarChart3" className="h-5 w-5 text-primary" />
+      {showPipelineView ? (
+        <PipelineBoard />
+      ) : (
+        <>
+          {/* Key Metrics */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <StatCard
+              title="Total Revenue"
+              value={`$${metrics.totalRevenue.toLocaleString()}`}
+              icon="DollarSign"
+              trend="up"
+              trendValue="+12.5%"
+            />
+            <StatCard
+              title="Conversion Rate"
+              value={`${metrics.conversionRate.toFixed(1)}%`}
+              icon="TrendingUp"
+              trend="up"
+              trendValue="+2.3%"
+            />
+            <StatCard
+              title="Avg Deal Size"
+              value={`$${metrics.avgDealSize.toLocaleString()}`}
+              icon="Target"
+              trend="up"
+              trendValue="+8.2%"
+            />
+            <StatCard
+              title="Total Leads"
+              value={metrics.totalLeads}
+              icon="Users"
+              trend="up"
+              trendValue="+15"
+            />
           </div>
-          <Chart
-            options={pipelineData.options}
-            series={pipelineData.series}
-            type="bar"
-            height={300}
-          />
-        </Card>
 
-        {/* Revenue Trend */}
-        <Card className="p-6">
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="text-lg font-semibold text-white">Revenue Trend</h3>
-            <ApperIcon name="TrendingUp" className="h-5 w-5 text-accent" />
-          </div>
-          <Chart
-            options={revenueData.options}
-            series={revenueData.series}
-            type="line"
-            height={300}
-          />
-        </Card>
+          {/* Charts */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Pipeline Conversion */}
+            <Card className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-lg font-semibold text-white">Pipeline Conversion</h3>
+                <ApperIcon name="BarChart3" className="h-5 w-5 text-primary" />
+              </div>
+              <Chart
+                options={pipelineData.options}
+                series={pipelineData.series}
+                type="bar"
+                height={300}
+              />
+            </Card>
 
-        {/* Activity Breakdown */}
-        <Card className="p-6">
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="text-lg font-semibold text-white">Activity Breakdown</h3>
-            <ApperIcon name="PieChart" className="h-5 w-5 text-secondary" />
-          </div>
-          <Chart
-            options={activityData.options}
-            series={activityData.series}
-            type="donut"
-            height={300}
-          />
-        </Card>
+            {/* Revenue Trend */}
+            <Card className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-lg font-semibold text-white">Revenue Trend</h3>
+                <ApperIcon name="TrendingUp" className="h-5 w-5 text-accent" />
+              </div>
+              <Chart
+                options={revenueData.options}
+                series={revenueData.series}
+                type="line"
+                height={300}
+              />
+            </Card>
 
-        {/* Performance Summary */}
-        <Card className="p-6">
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="text-lg font-semibold text-white">Performance Summary</h3>
-            <ApperIcon name="Activity" className="h-5 w-5 text-success" />
+            {/* Activity Breakdown */}
+            <Card className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-lg font-semibold text-white">Activity Breakdown</h3>
+                <ApperIcon name="PieChart" className="h-5 w-5 text-secondary" />
+              </div>
+              <Chart
+                options={activityData.options}
+                series={activityData.series}
+                type="donut"
+                height={300}
+              />
+            </Card>
+
+            {/* Performance Summary */}
+            <Card className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-lg font-semibold text-white">Performance Summary</h3>
+                <ApperIcon name="Activity" className="h-5 w-5 text-success" />
+              </div>
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <span className="text-gray-400">Leads Generated</span>
+                  <span className="text-white font-semibold">+{metrics.totalLeads}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-gray-400">Deals Closed</span>
+                  <span className="text-white font-semibold">+{metrics.wonLeads}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-gray-400">Revenue Generated</span>
+                  <span className="text-white font-semibold">+${metrics.totalRevenue.toLocaleString()}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-gray-400">Active Contacts</span>
+                  <span className="text-white font-semibold">+{contacts.length}</span>
+                </div>
+              </div>
+            </Card>
           </div>
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <span className="text-gray-400">Leads Generated</span>
-              <span className="text-white font-semibold">+{metrics.totalLeads}</span>
+
+          {/* Detailed Reports */}
+          <Card className="p-6">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-lg font-semibold text-white">Detailed Reports</h3>
+              <Button variant="outline" size="sm">
+                <ApperIcon name="Filter" className="h-4 w-4 mr-2" />
+                Filter
+              </Button>
             </div>
-            <div className="flex items-center justify-between">
-              <span className="text-gray-400">Deals Closed</span>
-              <span className="text-white font-semibold">+{metrics.wonLeads}</span>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <Button variant="outline" className="flex items-center justify-center gap-2 h-16">
+                <ApperIcon name="FileText" className="h-5 w-5" />
+                <span>Sales Report</span>
+              </Button>
+              <Button variant="outline" className="flex items-center justify-center gap-2 h-16">
+                <ApperIcon name="Activity" className="h-5 w-5" />
+                <span>Activity Report</span>
+              </Button>
+              <Button variant="outline" className="flex items-center justify-center gap-2 h-16">
+                <ApperIcon name="Users" className="h-5 w-5" />
+                <span>Contact Report</span>
+              </Button>
             </div>
-            <div className="flex items-center justify-between">
-              <span className="text-gray-400">Revenue Generated</span>
-              <span className="text-white font-semibold">+${metrics.totalRevenue.toLocaleString()}</span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-gray-400">Active Contacts</span>
-              <span className="text-white font-semibold">+{contacts.length}</span>
-            </div>
-          </div>
-        </Card>
-      </div>
-
-      {/* Detailed Reports */}
-      <Card className="p-6">
-        <div className="flex items-center justify-between mb-6">
-          <h3 className="text-lg font-semibold text-white">Detailed Reports</h3>
-          <Button variant="outline" size="sm">
-            <ApperIcon name="Filter" className="h-4 w-4 mr-2" />
-            Filter
-          </Button>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <Button variant="outline" className="flex items-center justify-center gap-2 h-16">
-            <ApperIcon name="FileText" className="h-5 w-5" />
-            <span>Sales Report</span>
-          </Button>
-          <Button variant="outline" className="flex items-center justify-center gap-2 h-16">
-            <ApperIcon name="Activity" className="h-5 w-5" />
-            <span>Activity Report</span>
-          </Button>
-          <Button variant="outline" className="flex items-center justify-center gap-2 h-16">
-            <ApperIcon name="Users" className="h-5 w-5" />
-            <span>Contact Report</span>
-          </Button>
-        </div>
-      </Card>
+          </Card>
+        </>
+      )}
     </div>
-  );
+);
 };
 
 export default Reports;
