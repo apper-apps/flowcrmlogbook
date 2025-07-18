@@ -314,7 +314,7 @@ const filters = [
           ))}
           </div>
         </DragDropContext>
-      )}
+      )
       
       <CreateLeadModal 
         isOpen={showCreateModal} 
