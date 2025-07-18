@@ -1,17 +1,18 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setMessages, setLoading, setError, setActiveThread } from "@/store/slices/inboxSlice";
-import { inboxService } from "@/services/api/inboxService";
-import ApperIcon from "@/components/ApperIcon";
-import Card from "@/components/atoms/Card";
-import Button from "@/components/atoms/Button";
-import Badge from "@/components/atoms/Badge";
-import Input from "@/components/atoms/Input";
-import Textarea from "@/components/atoms/Textarea";
-import { useLanguage } from "@/hooks/useLanguage";
 import { toast } from "react-toastify";
 import { format } from "date-fns";
-
+import ApperIcon from "@/components/ApperIcon";
+import Error from "@/components/ui/Error";
+import Loading from "@/components/ui/Loading";
+import Card from "@/components/atoms/Card";
+import Textarea from "@/components/atoms/Textarea";
+import Input from "@/components/atoms/Input";
+import Badge from "@/components/atoms/Badge";
+import Button from "@/components/atoms/Button";
+import useLanguage from "@/hooks/useLanguage";
+import { inboxService } from "@/services/api/inboxService";
+import { setActiveThread, setError, setLoading, setMessages } from "@/store/slices/inboxSlice";
 const InboxList = () => {
   const dispatch = useDispatch();
   const { messages, loading, error, activeThread } = useSelector((state) => state.inbox);
@@ -115,38 +116,15 @@ const InboxList = () => {
         return "accent";
       default:
         return "default";
-    }
+}
   };
 
   if (loading) {
-    return (
-      <div className="space-y-4">
-        {[...Array(5)].map((_, i) => (
-          <Card key={i} className="p-4">
-            <div className="animate-pulse">
-              <div className="flex items-center gap-4">
-                <div className="w-10 h-10 bg-gray-700 rounded-full"></div>
-                <div className="space-y-2 flex-1">
-                  <div className="h-4 bg-gray-700 rounded w-1/3"></div>
-                  <div className="h-3 bg-gray-700 rounded w-2/3"></div>
-                </div>
-              </div>
-            </div>
-          </Card>
-        ))}
-      </div>
-    );
+    return <Loading />;
   }
 
   if (error) {
-    return (
-      <Card className="p-8 text-center">
-        <ApperIcon name="AlertCircle" className="h-12 w-12 text-error mx-auto mb-4" />
-        <h3 className="text-lg font-semibold text-white mb-2">{t("error")}</h3>
-        <p className="text-gray-400 mb-4">{error}</p>
-        <Button onClick={loadMessages}>Retry</Button>
-      </Card>
-    );
+    return <Error message={error} onRetry={loadMessages} />;
   }
 
   if (filteredMessages.length === 0) {

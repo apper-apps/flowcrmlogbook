@@ -11,16 +11,18 @@ const initialState = {
 const contactsSlice = createSlice({
   name: "contacts",
   initialState,
-  reducers: {
-setLoading: (state, action) => {
+reducers: {
+    setLoading: (state, action) => {
       state.loading = action.payload;
+      // Clear error when starting new loading operation
+      if (action.payload) {
+        state.error = null;
+      }
     },
     setError: (state, action) => {
       state.error = action.payload;
-      // Reset loading state when error occurs
-      if (action.payload) {
-        state.loading = false;
-      }
+      // Always reset loading state when error occurs
+      state.loading = false;
     },
     setContacts: (state, action) => {
       state.contacts = action.payload;
@@ -46,6 +48,12 @@ setLoading: (state, action) => {
     deleteContact: (state, action) => {
       state.contacts = state.contacts.filter(contact => contact.Id !== action.payload);
     },
+    resetContactsState: (state) => {
+      state.loading = false;
+      state.error = null;
+      state.searchTerm = "";
+      state.selectedTags = [];
+    },
   },
 });
 
@@ -58,6 +66,7 @@ export const {
   addContact,
   updateContact,
   deleteContact,
+  resetContactsState,
 } = contactsSlice.actions;
 
 export default contactsSlice.reducer;
