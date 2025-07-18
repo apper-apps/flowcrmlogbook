@@ -147,27 +147,9 @@ return (
           {/* Inbox List */}
           <InboxList />
         </>
-      )}
+)}
     </div>
   );
-</div>
-        <div className="flex items-center gap-4">
-          <Button 
-            variant={showPipelineView ? "primary" : "outline"}
-            onClick={() => setShowPipelineView(!showPipelineView)}
-          >
-            <ApperIcon name="BarChart3" className="h-4 w-4 mr-2" />
-            Pipeline View
-          </Button>
-          <Button variant="outline">
-            <ApperIcon name="RefreshCw" className="h-4 w-4 mr-2" />
-            Sync All
-          </Button>
-          <Button>
-            <ApperIcon name="Plus" className="h-4 w-4 mr-2" />
-            {t("compose")}
-          </Button>
-        </div>
 };
 
 export default Inbox;
