@@ -30,11 +30,11 @@ const FilterDropdown = ({ filters, onFilterChange, selectedFilters = [] }) => {
         )}
       </Button>
       
-      {isOpen && (
+{isOpen && (
         <div className="absolute top-full left-0 mt-2 w-56 glass-dark rounded-lg border border-white/10 shadow-xl z-50">
-          <div className="p-4 space-y-2">
+          <div className="p-4 space-y-2 max-h-64 overflow-y-auto">
             {filters.map((filter) => (
-              <label key={filter.value} className="flex items-center gap-2 cursor-pointer">
+              <label key={filter.value} className="flex items-center gap-2 cursor-pointer hover:bg-white/5 p-2 rounded transition-colors">
                 <input
                   type="checkbox"
                   checked={selectedFilters.includes(filter.value)}
@@ -45,6 +45,17 @@ const FilterDropdown = ({ filters, onFilterChange, selectedFilters = [] }) => {
               </label>
             ))}
           </div>
+          
+          {selectedFilters.length > 0 && (
+            <div className="p-3 border-t border-white/10">
+              <button
+                onClick={() => onFilterChange([])}
+                className="text-xs text-gray-400 hover:text-white transition-colors"
+              >
+                Clear all filters
+              </button>
+            </div>
+          )}
         </div>
       )}
     </div>

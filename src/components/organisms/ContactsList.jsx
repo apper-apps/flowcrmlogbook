@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setContacts, setLoading, setError } from "@/store/slices/contactsSlice";
+import { setSectionFilters } from "@/store/slices/uiSlice";
 import { contactsService } from "@/services/api/contactsService";
 import ApperIcon from "@/components/ApperIcon";
 import Card from "@/components/atoms/Card";
 import Button from "@/components/atoms/Button";
 import Badge from "@/components/atoms/Badge";
 import SearchBar from "@/components/molecules/SearchBar";
+import ListView from "@/components/molecules/ListView";
 import Loading from "@/components/ui/Loading";
 import Error from "@/components/ui/Error";
 import { useLanguage } from "@/hooks/useLanguage";
@@ -14,8 +16,9 @@ import { toast } from "react-toastify";
 import { format } from "date-fns";
 
 const ContactsList = () => {
-  const dispatch = useDispatch();
+const dispatch = useDispatch();
   const { contacts, loading, error, searchTerm } = useSelector((state) => state.contacts);
+  const { sectionFilters } = useSelector((state) => state.ui.listView);
   const { t } = useLanguage();
   const [filteredContacts, setFilteredContacts] = useState([]);
   const [selectedContact, setSelectedContact] = useState(null);
@@ -103,63 +106,101 @@ if (loading) {
     );
   }
 
+const filters = [
+    { label: "All Contacts", value: "all" },
+    { label: "Active", value: "active" },
+    { label: "Inactive", value: "inactive" },
+    { label: "Pending", value: "pending" }
+  ];
+
+  const handleFilterChange = (filters) => {
+    dispatch(setSectionFilters({ section: "contacts", filters }));
+  };
+
+  const renderContactItem = (contact, { rowSize }) => (
+    <Card
+      className="cursor-pointer hover:shadow-lg transition-all duration-200"
+      onClick={() => handleContactClick(contact)}
+    >
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <div className="w-10 h-10 rounded-full bg-gradient-to-r from-primary to-secondary flex items-center justify-center">
+            <span className="text-sm font-medium text-white">
+              {contact.name.charAt(0)}
+            </span>
+          </div>
+          <div>
+            <h3 className="font-semibold text-white">{contact.name}</h3>
+            <p className="text-sm text-gray-400">{contact.company}</p>
+            {rowSize !== "small" && (
+              <div className="flex items-center gap-4 mt-1">
+                <div className="flex items-center gap-1 text-xs text-gray-400">
+                  <ApperIcon name="Mail" className="h-3 w-3" />
+                  {contact.email}
+                </div>
+                <div className="flex items-center gap-1 text-xs text-gray-400">
+                  <ApperIcon name="Phone" className="h-3 w-3" />
+                  {contact.phone}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+        
+        <div className="flex items-center gap-4">
+          <div className="text-right">
+            <Badge variant={getStatusColor(contact.status)}>
+              {contact.status}
+            </Badge>
+            {rowSize !== "small" && (
+              <p className="text-xs text-gray-400 mt-1">
+                {format(new Date(contact.lastActivity), "MMM dd, yyyy")}
+              </p>
+            )}
+          </div>
+          
+          <div className="flex items-center gap-1">
+            <Button variant="ghost" size="sm">
+              <ApperIcon name="Mail" className="h-4 w-4" />
+            </Button>
+            <Button variant="ghost" size="sm">
+              <ApperIcon name="Phone" className="h-4 w-4" />
+            </Button>
+            <Button variant="ghost" size="sm">
+              <ApperIcon name="MoreHorizontal" className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
+      </div>
+    </Card>
+  );
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-      <div className="lg:col-span-2 space-y-4">
-        {filteredContacts.map((contact) => (
-          <Card
-            key={contact.Id}
-            className="p-4 cursor-pointer hover:shadow-lg transition-all duration-200"
-            onClick={() => handleContactClick(contact)}
-          >
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-r from-primary to-secondary flex items-center justify-center">
-                  <span className="text-sm font-medium text-white">
-                    {contact.name.charAt(0)}
-                  </span>
-                </div>
-                <div>
-                  <h3 className="font-semibold text-white">{contact.name}</h3>
-                  <p className="text-sm text-gray-400">{contact.company}</p>
-                  <div className="flex items-center gap-4 mt-1">
-                    <div className="flex items-center gap-1 text-xs text-gray-400">
-                      <ApperIcon name="Mail" className="h-3 w-3" />
-                      {contact.email}
-                    </div>
-                    <div className="flex items-center gap-1 text-xs text-gray-400">
-                      <ApperIcon name="Phone" className="h-3 w-3" />
-                      {contact.phone}
-                    </div>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="flex items-center gap-4">
-                <div className="text-right">
-                  <Badge variant={getStatusColor(contact.status)}>
-                    {contact.status}
-                  </Badge>
-                  <p className="text-xs text-gray-400 mt-1">
-                    {format(new Date(contact.lastActivity), "MMM dd, yyyy")}
-                  </p>
-                </div>
-                
-                <div className="flex items-center gap-1">
-                  <Button variant="ghost" size="sm">
-                    <ApperIcon name="Mail" className="h-4 w-4" />
-                  </Button>
-                  <Button variant="ghost" size="sm">
-                    <ApperIcon name="Phone" className="h-4 w-4" />
-                  </Button>
-                  <Button variant="ghost" size="sm">
-                    <ApperIcon name="MoreHorizontal" className="h-4 w-4" />
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </Card>
-        ))}
+      <div className="lg:col-span-2">
+        <ListView
+          items={filteredContacts}
+          renderItem={renderContactItem}
+          filters={filters}
+          section="contacts"
+          onFilterChange={handleFilterChange}
+          selectedFilters={sectionFilters.contacts}
+          emptyState={
+            <Card className="p-8 text-center">
+              <ApperIcon name="Users" className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+              <h3 className="text-lg font-semibold text-white mb-2">
+                {searchTerm ? "No contacts found" : "No contacts yet"}
+              </h3>
+              <p className="text-gray-400 mb-4">
+                {searchTerm 
+                  ? "Try adjusting your search terms"
+                  : "Start by adding your first contact to begin building your network"
+                }
+              </p>
+              <Button>{t("addContact")}</Button>
+            </Card>
+          }
+        />
       </div>
       
       {selectedContact && (

@@ -5,6 +5,16 @@ const initialState = {
   sidebarOpen: false,
   darkMode: true,
   notifications: [],
+  listView: {
+    rowSize: "medium", // large, medium, small
+    sectionFilters: {
+      inbox: [],
+      contacts: [],
+      pipeline: [],
+      documents: [],
+      billing: []
+    }
+  }
 };
 
 const uiSlice = createSlice({
@@ -29,6 +39,13 @@ const uiSlice = createSlice({
     removeNotification: (state, action) => {
       state.notifications = state.notifications.filter(n => n.id !== action.payload);
     },
+setRowSize: (state, action) => {
+      state.listView.rowSize = action.payload;
+    },
+    setSectionFilters: (state, action) => {
+      const { section, filters } = action.payload;
+      state.listView.sectionFilters[section] = filters;
+    },
   },
 });
 
@@ -39,6 +56,8 @@ export const {
   setDarkMode,
   addNotification,
   removeNotification,
+  setRowSize,
+  setSectionFilters,
 } = uiSlice.actions;
 
 export default uiSlice.reducer;

@@ -1,12 +1,14 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setInvoices, setLoading, setError } from "@/store/slices/billingSlice";
+import { setSectionFilters } from "@/store/slices/uiSlice";
 import { billingService } from "@/services/api/billingService";
 import ApperIcon from "@/components/ApperIcon";
 import Button from "@/components/atoms/Button";
 import Card from "@/components/atoms/Card";
 import Badge from "@/components/atoms/Badge";
 import StatCard from "@/components/molecules/StatCard";
+import ListView from "@/components/molecules/ListView";
 import Loading from "@/components/ui/Loading";
 import Error from "@/components/ui/Error";
 import Empty from "@/components/ui/Empty";
@@ -15,8 +17,9 @@ import { toast } from "react-toastify";
 import { format } from "date-fns";
 
 const Billing = () => {
-  const dispatch = useDispatch();
+const dispatch = useDispatch();
   const { invoices, loading, error } = useSelector((state) => state.billing);
+  const { sectionFilters } = useSelector((state) => state.ui.listView);
   const { t } = useLanguage();
 
   useEffect(() => {
@@ -75,7 +78,101 @@ const Billing = () => {
       style: "currency",
       currency: "USD",
     }).format(amount);
+};
+
+  const filters = [
+    { label: "All Invoices", value: "all" },
+    { label: "Paid", value: "paid" },
+    { label: "Pending", value: "pending" },
+    { label: "Overdue", value: "overdue" },
+    { label: "Draft", value: "draft" }
+  ];
+
+  const handleFilterChange = (filters) => {
+    dispatch(setSectionFilters({ section: "billing", filters }));
   };
+
+  const renderInvoiceItem = (invoice, { rowSize }) => (
+    <Card className="hover:shadow-lg transition-all duration-200">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <div className="p-3 rounded-lg bg-gradient-to-r from-primary/20 to-secondary/20">
+            <ApperIcon name="FileText" className="h-6 w-6 text-primary" />
+          </div>
+          <div>
+            <h3 className="font-semibold text-white">
+              Invoice #{invoice.number}
+            </h3>
+            <p className="text-sm text-gray-400">{invoice.contactName}</p>
+            {rowSize !== "small" && (
+              <div className="flex items-center gap-4 mt-1">
+                <div className="flex items-center gap-1 text-xs text-gray-400">
+                  <ApperIcon name="Calendar" className="h-3 w-3" />
+                  Created: {format(new Date(invoice.createdAt), "MMM dd, yyyy")}
+                </div>
+                <div className="flex items-center gap-1 text-xs text-gray-400">
+                  <ApperIcon name="Clock" className="h-3 w-3" />
+                  Due: {format(new Date(invoice.dueDate), "MMM dd, yyyy")}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+        
+        <div className="flex items-center gap-6">
+          <div className="text-right">
+            <p className="text-xl font-bold text-white">
+              {formatCurrency(invoice.total)}
+            </p>
+            <Badge variant={getStatusColor(invoice.status)} size="sm">
+              {invoice.status}
+            </Badge>
+          </div>
+          
+          <div className="flex items-center gap-2">
+            <Button variant="ghost" size="sm">
+              <ApperIcon name="Eye" className="h-4 w-4" />
+            </Button>
+            <Button variant="ghost" size="sm">
+              <ApperIcon name="Edit" className="h-4 w-4" />
+            </Button>
+            <Button variant="ghost" size="sm">
+              <ApperIcon name="Download" className="h-4 w-4" />
+            </Button>
+            <Button variant="ghost" size="sm">
+              <ApperIcon name="Send" className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
+      </div>
+      
+      {/* Invoice Items Summary */}
+      {rowSize !== "small" && (
+        <div className="mt-4 pt-4 border-t border-white/10">
+          <div className="flex items-center justify-between text-sm">
+            <div className="flex items-center gap-4">
+              <span className="text-gray-400">
+                {invoice.items.length} item{invoice.items.length !== 1 ? "s" : ""}
+              </span>
+              {invoice.status === "paid" && invoice.paidAt && (
+                <div className="flex items-center gap-1 text-success">
+                  <ApperIcon name="Check" className="h-3 w-3" />
+                  Paid on {format(new Date(invoice.paidAt), "MMM dd, yyyy")}
+                </div>
+              )}
+            </div>
+            
+            {invoice.status === "pending" && (
+              <Button size="sm" variant="primary">
+                <ApperIcon name="Send" className="h-4 w-4 mr-2" />
+                Send Reminder
+              </Button>
+            )}
+          </div>
+        </div>
+      )}
+    </Card>
+  );
 
   if (loading) {
     return <Loading />;
@@ -151,86 +248,24 @@ const Billing = () => {
         />
       </div>
 
-      {/* Invoices List */}
-      <div className="space-y-4">
-        {invoices.map((invoice) => (
-          <Card key={invoice.Id} className="p-6 hover:shadow-lg transition-all duration-200">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                <div className="p-3 rounded-lg bg-gradient-to-r from-primary/20 to-secondary/20">
-                  <ApperIcon name="FileText" className="h-6 w-6 text-primary" />
-                </div>
-                <div>
-                  <h3 className="font-semibold text-white">
-                    Invoice #{invoice.number}
-                  </h3>
-                  <p className="text-sm text-gray-400">{invoice.contactName}</p>
-                  <div className="flex items-center gap-4 mt-1">
-                    <div className="flex items-center gap-1 text-xs text-gray-400">
-                      <ApperIcon name="Calendar" className="h-3 w-3" />
-                      Created: {format(new Date(invoice.createdAt), "MMM dd, yyyy")}
-                    </div>
-                    <div className="flex items-center gap-1 text-xs text-gray-400">
-                      <ApperIcon name="Clock" className="h-3 w-3" />
-                      Due: {format(new Date(invoice.dueDate), "MMM dd, yyyy")}
-                    </div>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="flex items-center gap-6">
-                <div className="text-right">
-                  <p className="text-xl font-bold text-white">
-                    {formatCurrency(invoice.total)}
-                  </p>
-                  <Badge variant={getStatusColor(invoice.status)} size="sm">
-                    {invoice.status}
-                  </Badge>
-                </div>
-                
-                <div className="flex items-center gap-2">
-                  <Button variant="ghost" size="sm">
-                    <ApperIcon name="Eye" className="h-4 w-4" />
-                  </Button>
-                  <Button variant="ghost" size="sm">
-                    <ApperIcon name="Edit" className="h-4 w-4" />
-                  </Button>
-                  <Button variant="ghost" size="sm">
-                    <ApperIcon name="Download" className="h-4 w-4" />
-                  </Button>
-                  <Button variant="ghost" size="sm">
-                    <ApperIcon name="Send" className="h-4 w-4" />
-                  </Button>
-                </div>
-              </div>
-            </div>
-            
-            {/* Invoice Items Summary */}
-            <div className="mt-4 pt-4 border-t border-white/10">
-              <div className="flex items-center justify-between text-sm">
-                <div className="flex items-center gap-4">
-                  <span className="text-gray-400">
-                    {invoice.items.length} item{invoice.items.length !== 1 ? "s" : ""}
-                  </span>
-                  {invoice.status === "paid" && invoice.paidAt && (
-                    <div className="flex items-center gap-1 text-success">
-                      <ApperIcon name="Check" className="h-3 w-3" />
-                      Paid on {format(new Date(invoice.paidAt), "MMM dd, yyyy")}
-                    </div>
-                  )}
-                </div>
-                
-                {invoice.status === "pending" && (
-                  <Button size="sm" variant="primary">
-                    <ApperIcon name="Send" className="h-4 w-4 mr-2" />
-                    Send Reminder
-                  </Button>
-                )}
-              </div>
-            </div>
-          </Card>
-        ))}
-      </div>
+{/* Invoices List */}
+      <ListView
+        items={invoices}
+        renderItem={renderInvoiceItem}
+        filters={filters}
+        section="billing"
+        onFilterChange={handleFilterChange}
+        selectedFilters={sectionFilters.billing}
+        emptyState={
+          <Empty
+            icon="CreditCard"
+            title="No invoices yet"
+            description="Create your first invoice to start tracking payments and revenue"
+            actionLabel="Create Invoice"
+            onAction={() => toast.info("Invoice creation coming soon!")}
+          />
+        }
+      />
     </div>
   );
 };

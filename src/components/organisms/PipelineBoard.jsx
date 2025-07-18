@@ -2,20 +2,24 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import { setLeads, updateLead } from "@/store/slices/pipelineSlice";
+import { setSectionFilters } from "@/store/slices/uiSlice";
 import { pipelineService } from "@/services/api/pipelineService";
 import ApperIcon from "@/components/ApperIcon";
 import Card from "@/components/atoms/Card";
 import Badge from "@/components/atoms/Badge";
 import Button from "@/components/atoms/Button";
+import ListView from "@/components/molecules/ListView";
 import { useLanguage } from "@/hooks/useLanguage";
 import { toast } from "react-toastify";
 import { format } from "date-fns";
 
 const PipelineBoard = () => {
-  const dispatch = useDispatch();
+const dispatch = useDispatch();
   const { leads, activePipeline } = useSelector((state) => state.pipeline);
+  const { sectionFilters } = useSelector((state) => state.ui.listView);
   const { t } = useLanguage();
   const [stages, setStages] = useState([]);
+  const [viewMode, setViewMode] = useState("board"); // board or list
 
   useEffect(() => {
     loadData();
@@ -79,10 +83,114 @@ const PipelineBoard = () => {
     }).format(value);
   };
 
+const filters = [
+    { label: "All Leads", value: "all" },
+    { label: "New", value: "new" },
+    { label: "Qualified", value: "qualified" },
+    { label: "Proposal", value: "proposal" },
+    { label: "Negotiation", value: "negotiation" },
+    { label: "Closed Won", value: "closedWon" },
+    { label: "Closed Lost", value: "closedLost" }
+  ];
+
+  const handleFilterChange = (filters) => {
+    dispatch(setSectionFilters({ section: "pipeline", filters }));
+  };
+
+  const renderLeadItem = (lead, { rowSize }) => (
+    <Card className="cursor-pointer hover:shadow-lg transition-all duration-200">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <div className="w-10 h-10 rounded-full bg-gradient-to-r from-primary to-secondary flex items-center justify-center">
+            <span className="text-sm font-medium text-white">
+              {lead.name.charAt(0)}
+            </span>
+          </div>
+          <div>
+            <h3 className="font-semibold text-white">{lead.name}</h3>
+            <p className="text-sm text-gray-400">{lead.company}</p>
+            {rowSize !== "small" && (
+              <div className="flex items-center gap-2 mt-1">
+                <Badge variant="secondary" size="sm">
+                  {lead.stage}
+                </Badge>
+                <span className="text-xs text-gray-400">
+                  {format(new Date(lead.lastActivity), "MMM dd")}
+                </span>
+              </div>
+            )}
+          </div>
+        </div>
+        
+        <div className="flex items-center gap-4">
+          <div className="text-right">
+            <p className="text-sm font-semibold text-primary">
+              {formatCurrency(lead.value || 0)}
+            </p>
+            {rowSize !== "small" && (
+              <p className="text-xs text-gray-400">
+                {lead.owner || "Unassigned"}
+              </p>
+            )}
+          </div>
+          
+          <div className="flex items-center gap-1">
+            <Button variant="ghost" size="sm">
+              <ApperIcon name="Mail" className="h-4 w-4" />
+            </Button>
+            <Button variant="ghost" size="sm">
+              <ApperIcon name="Phone" className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
+      </div>
+    </Card>
+  );
+
   return (
-    <div className="h-full">
-      <DragDropContext onDragEnd={handleDragEnd}>
-        <div className="flex gap-6 h-full overflow-x-auto pb-4">
+    <div className="h-full space-y-6">
+      {/* View Mode Toggle */}
+      <div className="flex items-center gap-4">
+        <Button
+          variant={viewMode === "board" ? "primary" : "ghost"}
+          size="sm"
+          onClick={() => setViewMode("board")}
+        >
+          <ApperIcon name="Columns" className="h-4 w-4 mr-2" />
+          Board View
+        </Button>
+        <Button
+          variant={viewMode === "list" ? "primary" : "ghost"}
+          size="sm"
+          onClick={() => setViewMode("list")}
+        >
+          <ApperIcon name="List" className="h-4 w-4 mr-2" />
+          List View
+        </Button>
+      </div>
+
+      {viewMode === "list" ? (
+        <ListView
+          items={leads}
+          renderItem={renderLeadItem}
+          filters={filters}
+          section="pipeline"
+          onFilterChange={handleFilterChange}
+          selectedFilters={sectionFilters.pipeline}
+          emptyState={
+            <Card className="p-8 text-center">
+              <ApperIcon name="Users" className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+              <h3 className="text-lg font-semibold text-white mb-2">No leads yet</h3>
+              <p className="text-gray-400 mb-4">
+                Start by adding your first lead to begin tracking opportunities
+              </p>
+              <Button>{t("addLead")}</Button>
+            </Card>
+          }
+        />
+      ) : (
+        <DragDropContext onDragEnd={handleDragEnd}>
+          <div className="flex gap-6 h-full overflow-x-auto pb-4">
           {stages.map((stage) => (
             <div key={stage.Id} className="flex-shrink-0 w-80">
               <Droppable droppableId={stage.Id.toString()}>
@@ -200,8 +308,9 @@ const PipelineBoard = () => {
               </Droppable>
             </div>
           ))}
-        </div>
-      </DragDropContext>
+</div>
+        </DragDropContext>
+      )}
     </div>
   );
 };

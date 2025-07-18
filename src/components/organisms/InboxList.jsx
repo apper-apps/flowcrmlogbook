@@ -10,12 +10,15 @@ import Textarea from "@/components/atoms/Textarea";
 import Input from "@/components/atoms/Input";
 import Badge from "@/components/atoms/Badge";
 import Button from "@/components/atoms/Button";
+import ListView from "@/components/molecules/ListView";
 import useLanguage from "@/hooks/useLanguage";
 import { inboxService } from "@/services/api/inboxService";
 import { setActiveThread, setError, setLoading, setMessages } from "@/store/slices/inboxSlice";
+import { setSectionFilters } from "@/store/slices/uiSlice";
 const InboxList = () => {
-  const dispatch = useDispatch();
+const dispatch = useDispatch();
   const { messages, loading, error, activeThread } = useSelector((state) => state.inbox);
+  const { sectionFilters } = useSelector((state) => state.ui.listView);
   const { t } = useLanguage();
   const [filteredMessages, setFilteredMessages] = useState([]);
   const [filter, setFilter] = useState("all");
@@ -145,9 +148,67 @@ const InboxList = () => {
     );
   }
 
+const filters = [
+    { label: "All Messages", value: "all" },
+    { label: "Unread", value: "unread" },
+    { label: "Email", value: "email" },
+    { label: "LinkedIn", value: "linkedin" },
+    { label: "WhatsApp", value: "whatsapp" },
+    { label: "Facebook", value: "facebook" },
+    { label: "Instagram", value: "instagram" }
+  ];
+
+  const handleFilterChange = (filters) => {
+    dispatch(setSectionFilters({ section: "inbox", filters }));
+  };
+
+  const renderMessageItem = (message, { rowSize }) => (
+    <Card
+      className={`cursor-pointer hover:shadow-lg transition-all duration-200 ${
+        !message.isRead ? "border-l-4 border-primary" : ""
+      }`}
+      onClick={() => handleMessageClick(message)}
+    >
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-4 flex-1">
+          <div className="w-10 h-10 rounded-full bg-gradient-to-r from-primary to-secondary flex items-center justify-center">
+            <ApperIcon name={getChannelIcon(message.channel)} className="h-4 w-4 text-white" />
+          </div>
+          <div className="flex-1">
+            <div className="flex items-center gap-2 mb-1">
+              <h3 className={`font-semibold ${!message.isRead ? "text-white" : "text-gray-300"}`}>
+                {message.contactName}
+              </h3>
+              <Badge variant={getChannelColor(message.channel)} size="sm">
+                {message.channel}
+              </Badge>
+            </div>
+            <p className={`text-sm ${!message.isRead ? "text-gray-300" : "text-gray-400"}`}>
+              {message.subject}
+            </p>
+            {rowSize !== "small" && (
+              <p className="text-xs text-gray-500 mt-1 truncate">
+                {message.body}
+              </p>
+            )}
+          </div>
+        </div>
+        
+        <div className="text-right">
+          <p className="text-xs text-gray-400">
+            {format(new Date(message.timestamp), "MMM dd, HH:mm")}
+          </p>
+          {!message.isRead && (
+            <div className="w-2 h-2 bg-primary rounded-full mt-2 ml-auto"></div>
+          )}
+        </div>
+      </div>
+    </Card>
+  );
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-      <div className="lg:col-span-2 space-y-4">
+      <div className="lg:col-span-2">
         {/* Filter Tabs */}
         <div className="flex items-center gap-4 mb-6">
           <Button
@@ -180,49 +241,29 @@ const InboxList = () => {
           </Button>
         </div>
 
-        {/* Messages List */}
-        {filteredMessages.map((message) => (
-          <Card
-            key={message.Id}
-            className={`p-4 cursor-pointer hover:shadow-lg transition-all duration-200 ${
-              !message.isRead ? "border-l-4 border-primary" : ""
-            }`}
-            onClick={() => handleMessageClick(message)}
-          >
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-4 flex-1">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-r from-primary to-secondary flex items-center justify-center">
-                  <ApperIcon name={getChannelIcon(message.channel)} className="h-4 w-4 text-white" />
-                </div>
-                <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-1">
-                    <h3 className={`font-semibold ${!message.isRead ? "text-white" : "text-gray-300"}`}>
-                      {message.contactName}
-                    </h3>
-                    <Badge variant={getChannelColor(message.channel)} size="sm">
-                      {message.channel}
-                    </Badge>
-                  </div>
-                  <p className={`text-sm ${!message.isRead ? "text-gray-300" : "text-gray-400"}`}>
-                    {message.subject}
-                  </p>
-                  <p className="text-xs text-gray-500 mt-1 truncate">
-                    {message.body}
-                  </p>
-                </div>
-              </div>
-              
-              <div className="text-right">
-                <p className="text-xs text-gray-400">
-                  {format(new Date(message.timestamp), "MMM dd, HH:mm")}
-                </p>
-                {!message.isRead && (
-                  <div className="w-2 h-2 bg-primary rounded-full mt-2 ml-auto"></div>
-                )}
-              </div>
-            </div>
-          </Card>
-        ))}
+<ListView
+          items={filteredMessages}
+          renderItem={renderMessageItem}
+          filters={filters}
+          section="inbox"
+          onFilterChange={handleFilterChange}
+          selectedFilters={sectionFilters.inbox}
+          emptyState={
+            <Card className="p-8 text-center">
+              <ApperIcon name="Mail" className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+              <h3 className="text-lg font-semibold text-white mb-2">
+                {filter === "unread" ? "No unread messages" : "No messages yet"}
+              </h3>
+              <p className="text-gray-400 mb-4">
+                {filter === "unread" 
+                  ? "You're all caught up! No new messages to review."
+                  : "Start conversations with your leads to see messages here"
+                }
+              </p>
+              <Button>{t("compose")}</Button>
+            </Card>
+          }
+        />
       </div>
       
       {/* Message Thread */}
