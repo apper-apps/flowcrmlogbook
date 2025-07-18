@@ -47,7 +47,7 @@ export const pipelineService = {
     }
   },
 
-  async getLeads() {
+async getLeads() {
     try {
       const { ApperClient } = window.ApperSDK;
       const apperClient = new ApperClient({
@@ -89,7 +89,21 @@ export const pipelineService = {
         return [];
       }
 
-      return response.data || [];
+      // Transform database fields to UI-expected property names
+      const leads = (response.data || []).map(lead => ({
+        ...lead,
+        // Map database "Name" to UI-expected "name"
+        name: lead.Name || lead.name || '',
+        // Map lookup fields if they exist
+        owner: lead.Owner?.Name || lead.owner || 'Unassigned',
+        // Map date fields
+        lastActivity: lead.last_activity || lead.lastActivity,
+        // Ensure other fields maintain compatibility
+        pipelineId: lead.pipeline_id || lead.pipelineId,
+        ownerId: lead.owner_id || lead.ownerId
+      }));
+
+      return leads;
     } catch (error) {
       if (error?.response?.data?.message) {
         console.error("Error fetching leads:", error?.response?.data?.message);

@@ -99,55 +99,61 @@ const filters = [
     dispatch(setSectionFilters({ section: "pipeline", filters }));
   };
 
-  const renderLeadItem = (lead, { rowSize }) => (
-    <Card className="cursor-pointer hover:shadow-lg transition-all duration-200">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <div className="w-10 h-10 rounded-full bg-gradient-to-r from-primary to-secondary flex items-center justify-center">
-            <span className="text-sm font-medium text-white">
-              {lead.name.charAt(0)}
-            </span>
-          </div>
-          <div>
-            <h3 className="font-semibold text-white">{lead.name}</h3>
-            <p className="text-sm text-gray-400">{lead.company}</p>
-            {rowSize !== "small" && (
-              <div className="flex items-center gap-2 mt-1">
-                <Badge variant="secondary" size="sm">
-                  {lead.stage}
-                </Badge>
-                <span className="text-xs text-gray-400">
-                  {format(new Date(lead.lastActivity), "MMM dd")}
-                </span>
-              </div>
-            )}
-          </div>
-        </div>
-        
-        <div className="flex items-center gap-4">
-          <div className="text-right">
-            <p className="text-sm font-semibold text-primary">
-              {formatCurrency(lead.value || 0)}
-            </p>
-            {rowSize !== "small" && (
-              <p className="text-xs text-gray-400">
-                {lead.owner || "Unassigned"}
-              </p>
-            )}
+const renderLeadItem = (lead, { rowSize }) => {
+    // Safely get lead name with fallback
+    const leadName = lead?.name || lead?.Name || 'Unnamed Lead';
+    const leadInitial = leadName.charAt(0).toUpperCase() || '?';
+    
+    return (
+      <Card className="cursor-pointer hover:shadow-lg transition-all duration-200">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <div className="w-10 h-10 rounded-full bg-gradient-to-r from-primary to-secondary flex items-center justify-center">
+              <span className="text-sm font-medium text-white">
+                {leadInitial}
+              </span>
+            </div>
+            <div>
+              <h3 className="font-semibold text-white">{leadName}</h3>
+              <p className="text-sm text-gray-400">{lead?.company || 'No company'}</p>
+              {rowSize !== "small" && (
+                <div className="flex items-center gap-2 mt-1">
+                  <Badge variant="secondary" size="sm">
+                    {lead?.stage || 'No stage'}
+                  </Badge>
+                  <span className="text-xs text-gray-400">
+                    {lead?.lastActivity ? format(new Date(lead.lastActivity), "MMM dd") : 'No date'}
+                  </span>
+                </div>
+              )}
+            </div>
           </div>
           
-          <div className="flex items-center gap-1">
-            <Button variant="ghost" size="sm">
-              <ApperIcon name="Mail" className="h-4 w-4" />
-            </Button>
-            <Button variant="ghost" size="sm">
-              <ApperIcon name="Phone" className="h-4 w-4" />
-            </Button>
+          <div className="flex items-center gap-4">
+            <div className="text-right">
+              <p className="text-sm font-semibold text-primary">
+                {formatCurrency(lead?.value || 0)}
+              </p>
+              {rowSize !== "small" && (
+                <p className="text-xs text-gray-400">
+                  {lead?.owner || "Unassigned"}
+                </p>
+              )}
+            </div>
+            
+            <div className="flex items-center gap-1">
+              <Button variant="ghost" size="sm">
+                <ApperIcon name="Mail" className="h-4 w-4" />
+              </Button>
+              <Button variant="ghost" size="sm">
+                <ApperIcon name="Phone" className="h-4 w-4" />
+              </Button>
+            </div>
           </div>
         </div>
-      </div>
-    </Card>
-  );
+      </Card>
+    );
+  };
 
 return (
     <div className="h-full space-y-6">
