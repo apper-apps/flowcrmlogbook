@@ -148,7 +148,7 @@ const filters = [
     </Card>
   );
 
-  return (
+return (
     <div className="h-full space-y-6">
       {/* View Mode Toggle */}
       <div className="flex items-center gap-4">
@@ -170,7 +170,7 @@ const filters = [
         </Button>
       </div>
 
-) : (
+      {viewMode === "list" ? (
         <ListView
           items={leads}
           renderItem={renderLeadItem}
@@ -310,11 +310,11 @@ const filters = [
                   </div>
                 )}
               </Droppable>
-</div>
+            </div>
           ))}
           </div>
         </DragDropContext>
-      )
+      )}
       
       <CreateLeadModal 
         isOpen={showCreateModal} 
