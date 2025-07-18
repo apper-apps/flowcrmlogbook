@@ -46,16 +46,16 @@ const ContactsList = () => {
     }
   };
 
-  const filterContacts = () => {
+const filterContacts = () => {
     if (!searchTerm) {
       setFilteredContacts(contacts);
       return;
     }
 
     const filtered = contacts.filter(contact =>
-      contact.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      contact.company.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      contact.email.toLowerCase().includes(searchTerm.toLowerCase())
+      contact.Name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      contact.company?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      contact.email?.toLowerCase().includes(searchTerm.toLowerCase())
     );
     setFilteredContacts(filtered);
   };
@@ -127,14 +127,14 @@ const filters = [
       onClick={() => handleContactClick(contact)}
     >
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
+<div className="flex items-center gap-4">
           <div className="w-10 h-10 rounded-full bg-gradient-to-r from-primary to-secondary flex items-center justify-center">
             <span className="text-sm font-medium text-white">
-              {contact.name.charAt(0)}
+              {contact.Name?.charAt(0)}
             </span>
           </div>
           <div>
-            <h3 className="font-semibold text-white">{contact.name}</h3>
+            <h3 className="font-semibold text-white">{contact.Name}</h3>
             <p className="text-sm text-gray-400">{contact.company}</p>
             {rowSize !== "small" && (
               <div className="flex items-center gap-4 mt-1">
@@ -157,8 +157,8 @@ const filters = [
               {contact.status}
             </Badge>
             {rowSize !== "small" && (
-              <p className="text-xs text-gray-400 mt-1">
-                {format(new Date(contact.lastActivity), "MMM dd, yyyy")}
+<p className="text-xs text-gray-400 mt-1">
+                {format(new Date(contact.last_activity || contact.lastActivity), "MMM dd, yyyy")}
               </p>
             )}
           </div>
@@ -215,11 +215,11 @@ const filters = [
           <Card className="p-6 sticky top-6">
             <div className="text-center mb-6">
               <div className="w-16 h-16 rounded-full bg-gradient-to-r from-primary to-secondary flex items-center justify-center mx-auto mb-4">
-                <span className="text-xl font-bold text-white">
-                  {selectedContact.name.charAt(0)}
+<span className="text-xl font-bold text-white">
+                  {selectedContact.Name?.charAt(0)}
                 </span>
               </div>
-              <h3 className="text-xl font-semibold text-white">{selectedContact.name}</h3>
+              <h3 className="text-xl font-semibold text-white">{selectedContact.Name}</h3>
               <p className="text-gray-400">{selectedContact.company}</p>
               <Badge variant={getStatusColor(selectedContact.status)} className="mt-2">
                 {selectedContact.status}
@@ -237,8 +237,8 @@ const filters = [
               </div>
               <div className="flex items-center gap-3">
                 <ApperIcon name="Clock" className="h-4 w-4 text-gray-400" />
-                <span className="text-sm text-white">
-                  Last activity: {format(new Date(selectedContact.lastActivity), "MMM dd, yyyy")}
+<span className="text-sm text-white">
+                  Last activity: {format(new Date(selectedContact.last_activity || selectedContact.lastActivity), "MMM dd, yyyy")}
                 </span>
               </div>
             </div>

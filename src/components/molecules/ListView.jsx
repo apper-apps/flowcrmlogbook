@@ -90,13 +90,15 @@ const ListView = ({
             )}
           </div>
           
-          <div className="flex items-center gap-4">
+<div className="flex items-center gap-4">
             {showFilters && filters.length > 0 && (
-              <FilterDropdown
-                filters={filters}
-                selectedFilters={selectedFilters}
-                onFilterChange={onFilterChange}
-              />
+              <div className="flex items-center gap-2">
+                <FilterDropdown
+                  filters={filters}
+                  selectedFilters={selectedFilters}
+                  onFilterChange={onFilterChange}
+                />
+              </div>
             )}
             <div className="flex items-center gap-2">
               <span className="text-sm text-gray-400">{items.length} items</span>

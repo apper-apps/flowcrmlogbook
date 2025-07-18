@@ -7,8 +7,9 @@ const Button = forwardRef(({ className, variant = "primary", size = "md", childr
     secondary: "glass-effect text-white hover:bg-white/20 border-white/20",
     outline: "border border-white/20 text-white hover:bg-white/10 hover:border-white/30",
     ghost: "text-white hover:bg-white/10",
-    danger: "bg-error hover:bg-error/90 text-white shadow-lg shadow-error/20",
+danger: "bg-error hover:bg-error/90 text-white shadow-lg shadow-error/20",
     success: "bg-success hover:bg-success/90 text-white shadow-lg shadow-success/20",
+    info: "bg-info hover:bg-info/90 text-white shadow-lg shadow-info/20",
   };
 
   const sizes = {

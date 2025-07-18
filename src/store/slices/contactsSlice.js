@@ -4,8 +4,9 @@ const initialState = {
   contacts: [],
   loading: false,
   error: null,
-  searchTerm: "",
+searchTerm: "",
   selectedTags: [],
+  groupBy: null,
 };
 
 const contactsSlice = createSlice({
@@ -51,8 +52,12 @@ const contactsSlice = createSlice({
     resetContactsState: (state) => {
       state.loading = false;
       state.error = null;
-      state.searchTerm = "";
+state.searchTerm = "";
       state.selectedTags = [];
+      state.groupBy = null;
+    },
+    setGroupBy: (state, action) => {
+      state.groupBy = action.payload;
     },
   },
 });
@@ -65,8 +70,9 @@ export const {
   setSelectedTags,
   addContact,
   updateContact,
-  deleteContact,
+deleteContact,
   resetContactsState,
+  setGroupBy,
 } = contactsSlice.actions;
 
 export default contactsSlice.reducer;
