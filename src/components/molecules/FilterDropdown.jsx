@@ -31,8 +31,8 @@ const FilterDropdown = ({ filters, onFilterChange, selectedFilters = [] }) => {
     dispatch(setGroupBy(groupValue));
     setIsGroupOpen(false);
   };
-  return (
-    <div className="relative">
+return (
+    <div className="relative flex items-center gap-2">
       <Button
         variant="outline"
         onClick={() => setIsOpen(!isOpen)}
@@ -45,10 +45,10 @@ const FilterDropdown = ({ filters, onFilterChange, selectedFilters = [] }) => {
             {selectedFilters.length}
           </span>
         )}
-</Button>
+      </Button>
       
       <Button
-        variant="info"
+        variant="outline"
         onClick={() => setIsGroupOpen(!isGroupOpen)}
         className="flex items-center gap-2"
       >
@@ -86,7 +86,7 @@ const FilterDropdown = ({ filters, onFilterChange, selectedFilters = [] }) => {
               </button>
             </div>
           )}
-</div>
+        </div>
       )}
       
       {isGroupOpen && (

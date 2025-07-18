@@ -1,27 +1,28 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setPipelines, setActivePipeline, setLoading, setError } from "@/store/slices/pipelineSlice";
-import { pipelineService } from "@/services/api/pipelineService";
-import ApperIcon from "@/components/ApperIcon";
-import Button from "@/components/atoms/Button";
-import Select from "@/components/atoms/Select";
-import StatCard from "@/components/molecules/StatCard";
-import PipelineBoard from "@/components/organisms/PipelineBoard";
-import Loading from "@/components/ui/Loading";
-import Error from "@/components/ui/Error";
-import Empty from "@/components/ui/Empty";
-import { useLanguage } from "@/hooks/useLanguage";
 import { toast } from "react-toastify";
+import ApperIcon from "@/components/ApperIcon";
+import Empty from "@/components/ui/Empty";
+import Error from "@/components/ui/Error";
+import Loading from "@/components/ui/Loading";
+import PipelineBoard from "@/components/organisms/PipelineBoard";
+import CreateLeadModal from "@/components/organisms/CreateLeadModal";
+import StatCard from "@/components/molecules/StatCard";
+import Select from "@/components/atoms/Select";
+import Button from "@/components/atoms/Button";
+import useLanguage from "@/hooks/useLanguage";
+import { pipelineService } from "@/services/api/pipelineService";
+import { setActivePipeline, setError, setLoading, setPipelines } from "@/store/slices/pipelineSlice";
 
 const Pipeline = () => {
   const dispatch = useDispatch();
   const { pipelines, leads, activePipeline, loading, error } = useSelector((state) => state.pipeline);
   const { t } = useLanguage();
+  const [showCreateModal, setShowCreateModal] = useState(false);
 
   useEffect(() => {
     loadData();
   }, []);
-
   const loadData = async () => {
     dispatch(setLoading(true));
     dispatch(setError(null));
@@ -97,9 +98,9 @@ const Pipeline = () => {
               <option key={pipeline.Id} value={pipeline.Id}>
                 {pipeline.name}
               </option>
-            ))}
+))}
           </Select>
-          <Button>
+          <Button onClick={() => setShowCreateModal(true)}>
             <ApperIcon name="Plus" className="h-4 w-4 mr-2" />
             {t("addLead")}
           </Button>
@@ -138,10 +139,16 @@ const Pipeline = () => {
         />
       </div>
 
-      {/* Pipeline Board */}
+{/* Pipeline Board */}
       <div className="bg-transparent rounded-xl border border-white/10 p-6">
         <PipelineBoard />
       </div>
+      
+      <CreateLeadModal 
+        isOpen={showCreateModal} 
+        onClose={() => setShowCreateModal(false)} 
+        onSuccess={loadData}
+      />
     </div>
   );
 };

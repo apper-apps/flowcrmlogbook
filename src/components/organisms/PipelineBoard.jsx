@@ -21,6 +21,7 @@ const PipelineBoard = () => {
   const [stages, setStages] = useState([]);
   const [viewMode, setViewMode] = useState("board"); // board or list
   const [showCreateModal, setShowCreateModal] = useState(false);
+  
   useEffect(() => {
     loadData();
   }, []);
@@ -169,7 +170,7 @@ const filters = [
         </Button>
       </div>
 
-      {viewMode === "list" ? (
+) : (
         <ListView
           items={leads}
           renderItem={renderLeadItem}
@@ -177,7 +178,7 @@ const filters = [
           section="pipeline"
           onFilterChange={handleFilterChange}
           selectedFilters={sectionFilters.pipeline}
-emptyState={
+          emptyState={
             <Card className="p-8 text-center">
               <ApperIcon name="Users" className="h-12 w-12 text-gray-400 mx-auto mb-4" />
               <h3 className="text-lg font-semibold text-white mb-2">No leads yet</h3>
@@ -318,6 +319,7 @@ emptyState={
       <CreateLeadModal 
         isOpen={showCreateModal} 
         onClose={() => setShowCreateModal(false)} 
+        onSuccess={loadData}
       />
     </div>
   );

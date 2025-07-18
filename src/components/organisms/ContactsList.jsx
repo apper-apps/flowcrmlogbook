@@ -163,11 +163,35 @@ const filters = [
             )}
           </div>
           
-          <div className="flex items-center gap-1">
-            <Button variant="ghost" size="sm">
+<div className="flex items-center gap-1">
+            <Button 
+              variant="ghost" 
+              size="sm"
+              onClick={(e) => {
+                e.stopPropagation();
+                if (contact.email) {
+                  window.open(`mailto:${contact.email}`, '_blank');
+                  toast.info(`Opening email client for ${contact.email}`);
+                } else {
+                  toast.warning('No email address available');
+                }
+              }}
+            >
               <ApperIcon name="Mail" className="h-4 w-4" />
             </Button>
-            <Button variant="ghost" size="sm">
+            <Button 
+              variant="ghost" 
+              size="sm"
+              onClick={(e) => {
+                e.stopPropagation();
+                if (contact.phone) {
+                  window.open(`tel:${contact.phone}`, '_blank');
+                  toast.info(`Opening phone dialer for ${contact.phone}`);
+                } else {
+                  toast.warning('No phone number available');
+                }
+              }}
+            >
               <ApperIcon name="Phone" className="h-4 w-4" />
             </Button>
             <Button variant="ghost" size="sm">
@@ -243,20 +267,51 @@ const filters = [
               </div>
             </div>
             
-            <div className="mt-6 space-y-2">
-              <Button className="w-full">
+<div className="mt-6 space-y-2">
+              <Button 
+                className="w-full"
+                onClick={() => {
+                  if (selectedContact.email) {
+                    window.open(`mailto:${selectedContact.email}`, '_blank');
+                    toast.info(`Opening email client for ${selectedContact.email}`);
+                  } else {
+                    toast.warning('No email address available');
+                  }
+                }}
+              >
                 <ApperIcon name="Mail" className="h-4 w-4 mr-2" />
                 Send Email
               </Button>
-              <Button variant="outline" className="w-full">
+              <Button 
+                variant="outline" 
+                className="w-full"
+                onClick={() => {
+                  if (selectedContact.phone) {
+                    window.open(`tel:${selectedContact.phone}`, '_blank');
+                    toast.info(`Opening phone dialer for ${selectedContact.phone}`);
+                  } else {
+                    toast.warning('No phone number available');
+                  }
+                }}
+              >
                 <ApperIcon name="Phone" className="h-4 w-4 mr-2" />
                 Call
               </Button>
-<Button variant="outline" className="w-full">
-              <ApperIcon name="Edit" className="h-4 w-4 mr-2" />
-              Edit Contact
-            </Button>
-          </div>
+              <Button 
+                variant="secondary" 
+                className="w-full"
+                onClick={() => {
+                  toast.info('Add to Pipeline functionality coming soon!');
+                }}
+              >
+                <ApperIcon name="GitBranch" className="h-4 w-4 mr-2" />
+                Add to Pipeline
+              </Button>
+              <Button variant="outline" className="w-full">
+                <ApperIcon name="Edit" className="h-4 w-4 mr-2" />
+                Edit Contact
+              </Button>
+            </div>
         </Card>
       </div>
     )}
