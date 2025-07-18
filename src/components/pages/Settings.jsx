@@ -380,20 +380,9 @@ return (
             </div>
           </div>
         </>
-      )}
+)}
     </div>
   );
-</div>
-        <div className="flex items-center gap-4">
-          <Button 
-            variant={showPipelineView ? "primary" : "outline"}
-            onClick={() => setShowPipelineView(!showPipelineView)}
-          >
-            <ApperIcon name="BarChart3" className="h-4 w-4 mr-2" />
-            Pipeline View
-          </Button>
-        </div>
-      </div>
 };
 
 export default Settings;
