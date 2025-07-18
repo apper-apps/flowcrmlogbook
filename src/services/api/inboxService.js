@@ -1,178 +1,338 @@
-import mockMessages from "@/services/mockData/messages.json";
-
-// Enhanced timeout wrapper with retry mechanism
-const withTimeoutAndRetry = async (asyncFn, maxRetries = 3, baseDelay = 1000, timeoutMs = 5000) => {
-  let lastError;
-  
-  for (let attempt = 0; attempt < maxRetries; attempt++) {
-    try {
-      const promise = asyncFn();
-      const timeoutPromise = new Promise((_, reject) => 
-        setTimeout(() => reject(new Error('Request timeout')), timeoutMs)
-      );
-      
-      return await Promise.race([promise, timeoutPromise]);
-    } catch (error) {
-      lastError = error;
-      
-      if (attempt === maxRetries - 1) {
-        throw error;
-      }
-      
-      // Exponential backoff with jitter
-      const delay = baseDelay * Math.pow(2, attempt) + Math.random() * 1000;
-      await new Promise(resolve => setTimeout(resolve, delay));
-    }
-  }
-  
-  throw lastError;
-};
-
-// Timeout wrapper to prevent infinite loading
-const withTimeout = (promise, timeoutMs = 5000) => {
-  return Promise.race([
-    promise,
-    new Promise((_, reject) => 
-      setTimeout(() => reject(new Error('Request timeout')), timeoutMs)
-    )
-  ]);
-};
+import { toast } from 'react-toastify';
 
 export const inboxService = {
   async getAll() {
     try {
-      return await withTimeoutAndRetry(
-        () => new Promise(resolve => setTimeout(() => resolve([...mockMessages]), 300)),
-        3,
-        1000,
-        5000
-      );
-    } catch (error) {
-      if (error.message === 'Request timeout') {
-        throw new Error('Connection timeout. Please check your internet connection and try again.');
+      const { ApperClient } = window.ApperSDK;
+      const apperClient = new ApperClient({
+        apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
+        apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
+      });
+
+      const params = {
+        fields: [
+          { field: { Name: "Name" } },
+          { field: { Name: "Tags" } },
+          { field: { Name: "Owner" } },
+          { field: { Name: "CreatedOn" } },
+          { field: { Name: "CreatedBy" } },
+          { field: { Name: "ModifiedOn" } },
+          { field: { Name: "ModifiedBy" } },
+          { field: { Name: "channel" } },
+          { field: { Name: "contact_name" } },
+          { field: { Name: "subject" } },
+          { field: { Name: "body" } },
+          { field: { Name: "timestamp" } },
+          { field: { Name: "is_read" } },
+          { field: { Name: "thread_id" } },
+          { field: { Name: "is_outbound" } },
+          { field: { Name: "priority" } },
+          { field: { Name: "contact_email" } },
+          { field: { Name: "contact_id" } }
+        ],
+        pagingInfo: {
+          limit: 100,
+          offset: 0
+        }
+      };
+
+      const response = await apperClient.fetchRecords("message", params);
+      
+      if (!response.success) {
+        console.error(response.message);
+        toast.error(response.message);
+        return [];
       }
-      throw new Error('Failed to load messages. Please try again.');
+
+      return response.data || [];
+    } catch (error) {
+      if (error?.response?.data?.message) {
+        console.error("Error fetching messages:", error?.response?.data?.message);
+      } else {
+        console.error(error.message);
+      }
+      return [];
     }
   },
 
   async getById(id) {
     try {
-      return await withTimeoutAndRetry(
-        () => new Promise(resolve => setTimeout(() => resolve(mockMessages.find(message => message.Id === id)), 200)),
-        3,
-        500,
-        3000
-      );
-    } catch (error) {
-      if (error.message === 'Request timeout') {
-        throw new Error('Connection timeout. Please check your internet connection and try again.');
+      const { ApperClient } = window.ApperSDK;
+      const apperClient = new ApperClient({
+        apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
+        apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
+      });
+
+      const params = {
+        fields: [
+          { field: { Name: "Name" } },
+          { field: { Name: "Tags" } },
+          { field: { Name: "Owner" } },
+          { field: { Name: "CreatedOn" } },
+          { field: { Name: "CreatedBy" } },
+          { field: { Name: "ModifiedOn" } },
+          { field: { Name: "ModifiedBy" } },
+          { field: { Name: "channel" } },
+          { field: { Name: "contact_name" } },
+          { field: { Name: "subject" } },
+          { field: { Name: "body" } },
+          { field: { Name: "timestamp" } },
+          { field: { Name: "is_read" } },
+          { field: { Name: "thread_id" } },
+          { field: { Name: "is_outbound" } },
+          { field: { Name: "priority" } },
+          { field: { Name: "contact_email" } },
+          { field: { Name: "contact_id" } }
+        ]
+      };
+
+      const response = await apperClient.getRecordById("message", parseInt(id), params);
+      
+      if (!response.success) {
+        console.error(response.message);
+        toast.error(response.message);
+        return null;
       }
-      throw new Error('Failed to load message. Please try again.');
+
+      return response.data || null;
+    } catch (error) {
+      if (error?.response?.data?.message) {
+        console.error(`Error fetching message with ID ${id}:`, error?.response?.data?.message);
+      } else {
+        console.error(error.message);
+      }
+      return null;
     }
   },
 
   async create(messageData) {
     try {
-      return await withTimeoutAndRetry(
-        () => new Promise(resolve => {
-          setTimeout(() => {
-            const newMessage = {
-              ...messageData,
-              Id: Math.max(...mockMessages.map(m => m.Id)) + 1,
-              timestamp: new Date().toISOString(),
-              isRead: false
-            };
-            mockMessages.push(newMessage);
-            resolve(newMessage);
-          }, 400);
-        }),
-        3,
-        1000,
-        5000
-      );
-    } catch (error) {
-      if (error.message === 'Request timeout') {
-        throw new Error('Connection timeout. Please check your internet connection and try again.');
+      const { ApperClient } = window.ApperSDK;
+      const apperClient = new ApperClient({
+        apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
+        apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
+      });
+
+      // Only include Updateable fields
+      const updateableData = {
+        Name: messageData.subject || messageData.Name,
+        Tags: Array.isArray(messageData.tags) ? messageData.tags.join(',') : messageData.Tags,
+        channel: messageData.channel,
+        contact_name: messageData.contactName,
+        subject: messageData.subject,
+        body: messageData.body,
+        timestamp: new Date().toISOString(),
+        is_read: false,
+        thread_id: messageData.threadId,
+        is_outbound: messageData.isOutbound || false,
+        priority: messageData.priority || "normal",
+        contact_email: messageData.contactEmail
+      };
+
+      const params = {
+        records: [updateableData]
+      };
+
+      const response = await apperClient.createRecord("message", params);
+      
+      if (!response.success) {
+        console.error(response.message);
+        toast.error(response.message);
+        return null;
       }
-      throw new Error('Failed to send message. Please try again.');
+
+      if (response.results) {
+        const successfulRecords = response.results.filter(result => result.success);
+        const failedRecords = response.results.filter(result => !result.success);
+        
+        if (failedRecords.length > 0) {
+          console.error(`Failed to create messages ${failedRecords.length} records:${JSON.stringify(failedRecords)}`);
+          
+          failedRecords.forEach(record => {
+            record.errors?.forEach(error => {
+              toast.error(`${error.fieldLabel}: ${error.message}`);
+            });
+            if (record.message) toast.error(record.message);
+          });
+        }
+        
+        return successfulRecords.length > 0 ? successfulRecords[0].data : null;
+      }
+
+      return null;
+    } catch (error) {
+      if (error?.response?.data?.message) {
+        console.error("Error creating message:", error?.response?.data?.message);
+      } else {
+        console.error(error.message);
+      }
+      return null;
     }
   },
 
   async update(id, messageData) {
     try {
-      return await withTimeoutAndRetry(
-        () => new Promise((resolve, reject) => {
-          setTimeout(() => {
-            const index = mockMessages.findIndex(message => message.Id === id);
-            if (index !== -1) {
-              mockMessages[index] = { ...mockMessages[index], ...messageData };
-              resolve(mockMessages[index]);
-            } else {
-              reject(new Error("Message not found"));
-            }
-          }, 300);
-        }),
-        3,
-        1000,
-        5000
-      );
-    } catch (error) {
-      if (error.message === 'Request timeout') {
-        throw new Error('Connection timeout. Please check your internet connection and try again.');
+      const { ApperClient } = window.ApperSDK;
+      const apperClient = new ApperClient({
+        apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
+        apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
+      });
+
+      // Only include Updateable fields
+      const updateableData = {
+        Id: parseInt(id),
+        Name: messageData.subject || messageData.Name,
+        Tags: Array.isArray(messageData.tags) ? messageData.tags.join(',') : messageData.Tags,
+        channel: messageData.channel,
+        contact_name: messageData.contactName,
+        subject: messageData.subject,
+        body: messageData.body,
+        timestamp: messageData.timestamp,
+        is_read: messageData.is_read || messageData.isRead,
+        thread_id: messageData.threadId,
+        is_outbound: messageData.isOutbound,
+        priority: messageData.priority,
+        contact_email: messageData.contactEmail
+      };
+
+      const params = {
+        records: [updateableData]
+      };
+
+      const response = await apperClient.updateRecord("message", params);
+      
+      if (!response.success) {
+        console.error(response.message);
+        toast.error(response.message);
+        return null;
       }
-      throw new Error('Failed to update message. Please try again.');
+
+      if (response.results) {
+        const successfulUpdates = response.results.filter(result => result.success);
+        const failedUpdates = response.results.filter(result => !result.success);
+        
+        if (failedUpdates.length > 0) {
+          console.error(`Failed to update messages ${failedUpdates.length} records:${JSON.stringify(failedUpdates)}`);
+          
+          failedUpdates.forEach(record => {
+            record.errors?.forEach(error => {
+              toast.error(`${error.fieldLabel}: ${error.message}`);
+            });
+            if (record.message) toast.error(record.message);
+          });
+        }
+        
+        return successfulUpdates.length > 0 ? successfulUpdates[0].data : null;
+      }
+
+      return null;
+    } catch (error) {
+      if (error?.response?.data?.message) {
+        console.error("Error updating message:", error?.response?.data?.message);
+      } else {
+        console.error(error.message);
+      }
+      return null;
     }
   },
 
   async delete(id) {
     try {
-      return await withTimeoutAndRetry(
-        () => new Promise((resolve, reject) => {
-          setTimeout(() => {
-            const index = mockMessages.findIndex(message => message.Id === id);
-            if (index !== -1) {
-              mockMessages.splice(index, 1);
-              resolve(true);
-            } else {
-              reject(new Error("Message not found"));
-            }
-          }, 300);
-        }),
-        3,
-        1000,
-        5000
-      );
-    } catch (error) {
-      if (error.message === 'Request timeout') {
-        throw new Error('Connection timeout. Please check your internet connection and try again.');
+      const { ApperClient } = window.ApperSDK;
+      const apperClient = new ApperClient({
+        apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
+        apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
+      });
+
+      const params = {
+        RecordIds: [parseInt(id)]
+      };
+
+      const response = await apperClient.deleteRecord("message", params);
+      
+      if (!response.success) {
+        console.error(response.message);
+        toast.error(response.message);
+        return false;
       }
-      throw new Error('Failed to delete message. Please try again.');
+
+      if (response.results) {
+        const successfulDeletions = response.results.filter(result => result.success);
+        const failedDeletions = response.results.filter(result => !result.success);
+        
+        if (failedDeletions.length > 0) {
+          console.error(`Failed to delete messages ${failedDeletions.length} records:${JSON.stringify(failedDeletions)}`);
+          
+          failedDeletions.forEach(record => {
+            if (record.message) toast.error(record.message);
+          });
+        }
+        
+        return successfulDeletions.length > 0;
+      }
+
+      return false;
+    } catch (error) {
+      if (error?.response?.data?.message) {
+        console.error("Error deleting message:", error?.response?.data?.message);
+      } else {
+        console.error(error.message);
+      }
+      return false;
     }
   },
 
   async markAsRead(id) {
     try {
-      return await withTimeoutAndRetry(
-        () => new Promise((resolve, reject) => {
-          setTimeout(() => {
-            const index = mockMessages.findIndex(message => message.Id === id);
-            if (index !== -1) {
-              mockMessages[index].isRead = true;
-              resolve(mockMessages[index]);
-            } else {
-              reject(new Error("Message not found"));
-            }
-          }, 200);
-        }),
-        3,
-        500,
-        3000
-      );
-    } catch (error) {
-      if (error.message === 'Request timeout') {
-        throw new Error('Connection timeout. Please check your internet connection and try again.');
+      const { ApperClient } = window.ApperSDK;
+      const apperClient = new ApperClient({
+        apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
+        apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
+      });
+
+      const updateableData = {
+        Id: parseInt(id),
+        is_read: true
+      };
+
+      const params = {
+        records: [updateableData]
+      };
+
+      const response = await apperClient.updateRecord("message", params);
+      
+      if (!response.success) {
+        console.error(response.message);
+        toast.error(response.message);
+        return null;
       }
-      throw new Error('Failed to mark message as read. Please try again.');
+
+      if (response.results) {
+        const successfulUpdates = response.results.filter(result => result.success);
+        const failedUpdates = response.results.filter(result => !result.success);
+        
+        if (failedUpdates.length > 0) {
+          console.error(`Failed to mark messages as read ${failedUpdates.length} records:${JSON.stringify(failedUpdates)}`);
+          
+          failedUpdates.forEach(record => {
+            record.errors?.forEach(error => {
+              toast.error(`${error.fieldLabel}: ${error.message}`);
+            });
+            if (record.message) toast.error(record.message);
+          });
+        }
+        
+        return successfulUpdates.length > 0 ? successfulUpdates[0].data : null;
+      }
+
+      return null;
+    } catch (error) {
+      if (error?.response?.data?.message) {
+        console.error("Error marking message as read:", error?.response?.data?.message);
+      } else {
+        console.error(error.message);
+      }
+      return null;
     }
   }
 };

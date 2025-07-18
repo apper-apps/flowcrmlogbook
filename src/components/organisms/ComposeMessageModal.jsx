@@ -61,11 +61,15 @@ const ComposeMessageModal = ({ isOpen, onClose }) => {
 
     setLoading(true);
     try {
-      const messageData = {
-        ...formData,
+const messageData = {
+        channel: formData.channel,
+        contactName: formData.contactName,
+        contactEmail: formData.contactEmail,
+        subject: formData.subject,
+        body: formData.body,
+        priority: formData.priority,
         isOutbound: true,
-        threadId: `thread_${Date.now()}`,
-        contactId: Math.floor(Math.random() * 1000) + 1
+        threadId: `thread_${Date.now()}`
       };
 
       const newMessage = await inboxService.create(messageData);

@@ -90,12 +90,17 @@ const CreateInvoiceModal = ({ isOpen, onClose }) => {
 
     setLoading(true);
     try {
-      const invoiceData = {
-        ...formData,
+const invoiceData = {
+        contactName: formData.contactName,
+        contactEmail: formData.contactEmail,
+        contactAddress: formData.contactAddress,
+        dueDate: formData.dueDate,
+        items: formData.items,
+        notes: formData.notes,
+        terms: formData.terms,
         total: calculateTotal(),
         subtotal: calculateTotal(),
-        tax: 0,
-        discount: 0
+        tax: 0
       };
 
       const newInvoice = await billingService.create(invoiceData);

@@ -1,18 +1,22 @@
-import { configureStore } from "@reduxjs/toolkit";
-import pipelineReducer from "@/store/slices/pipelineSlice";
-import contactsReducer from "@/store/slices/contactsSlice";
-import inboxReducer from "@/store/slices/inboxSlice";
-import documentsReducer from "@/store/slices/documentsSlice";
-import billingReducer from "@/store/slices/billingSlice";
-import uiReducer from "@/store/slices/uiSlice";
+import { configureStore } from '@reduxjs/toolkit';
+import uiSlice from './slices/uiSlice';
+import contactsSlice from './slices/contactsSlice';
+import pipelineSlice from './slices/pipelineSlice';
+import inboxSlice from './slices/inboxSlice';
+import documentsSlice from './slices/documentsSlice';
+import billingSlice from './slices/billingSlice';
+import userSlice from './slices/userSlice';
 
 export const store = configureStore({
   reducer: {
-    pipeline: pipelineReducer,
-    contacts: contactsReducer,
-    inbox: inboxReducer,
-    documents: documentsReducer,
-    billing: billingReducer,
-    ui: uiReducer,
+    ui: uiSlice,
+    contacts: contactsSlice,
+    pipeline: pipelineSlice,
+    inbox: inboxSlice,
+    documents: documentsSlice,
+    billing: billingSlice,
+    user: userSlice,
   },
 });
+
+export default store;

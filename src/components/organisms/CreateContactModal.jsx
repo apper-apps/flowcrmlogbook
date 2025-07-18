@@ -59,10 +59,16 @@ const CreateContactModal = ({ isOpen, onClose }) => {
 
     setLoading(true);
     try {
-      const contactData = {
-        ...formData,
+const contactData = {
+        name: formData.name,
+        company: formData.company,
+        email: formData.email,
+        phone: formData.phone,
+        position: formData.position,
+        status: formData.status,
+        source: formData.source || "direct",
         tags: formData.tags ? formData.tags.split(",").map(tag => tag.trim()) : [],
-        source: formData.source || "direct"
+        notes: formData.notes
       };
 
       const newContact = await contactsService.create(contactData);

@@ -51,10 +51,14 @@ const CreateDocumentModal = ({ isOpen, onClose }) => {
 
     setLoading(true);
     try {
-      const documentData = {
-        ...formData,
-        tags: formData.tags ? formData.tags.split(",").map(tag => tag.trim()) : [],
-        content: formData.content || `# ${formData.title}\n\n${formData.description || "Document content will be added here."}`
+const documentData = {
+        title: formData.title,
+        type: formData.type,
+        contactName: formData.contactName,
+        contactEmail: formData.contactEmail,
+        description: formData.description,
+        content: formData.content || `# ${formData.title}\n\n${formData.description || "Document content will be added here."}`,
+        tags: formData.tags ? formData.tags.split(",").map(tag => tag.trim()) : []
       };
 
       const newDocument = await documentsService.create(documentData);

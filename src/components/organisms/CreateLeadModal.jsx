@@ -63,12 +63,16 @@ const CreateLeadModal = ({ isOpen, onClose }) => {
 
     setLoading(true);
     try {
-      const leadData = {
-        ...formData,
+const leadData = {
+        name: formData.name,
+        company: formData.company,
+        email: formData.email,
+        phone: formData.phone,
         value: formData.value ? parseFloat(formData.value) : 0,
-        tags: formData.tags ? formData.tags.split(",").map(tag => tag.trim()) : [],
+        stage: formData.stage,
         source: formData.source || "website",
-        owner: formData.owner || "Unassigned"
+        tags: formData.tags ? formData.tags.split(",").map(tag => tag.trim()) : [],
+        notes: formData.notes
       };
 
       const newLead = await pipelineService.create(leadData);
