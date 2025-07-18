@@ -28,12 +28,12 @@ const translations = {
     deleteContact: "Delete Contact",
     contactInfo: "Contact Information",
     
-    // Inbox
+// Inbox
     messages: "Messages",
     newMessage: "New Message",
     reply: "Reply",
     forward: "Forward",
-    delete: "Delete",
+    deleteMessage: "Delete",
     markAsRead: "Mark as Read",
     markAsUnread: "Mark as Unread",
     
@@ -106,12 +106,12 @@ const translations = {
     deleteContact: "Eliminar Contacto",
     contactInfo: "Información de Contacto",
     
-    // Inbox
+// Inbox
     messages: "Mensajes",
     newMessage: "Nuevo Mensaje",
     reply: "Responder",
     forward: "Reenviar",
-    delete: "Eliminar",
+    deleteMessage: "Eliminar",
     markAsRead: "Marcar como Leído",
     markAsUnread: "Marcar como No Leído",
     
