@@ -19,6 +19,7 @@ const Pipeline = () => {
   const { pipelines, leads, activePipeline, loading, error } = useSelector((state) => state.pipeline);
   const { t } = useLanguage();
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [createLoading, setCreateLoading] = useState(false);
 
   useEffect(() => {
     loadData();
@@ -93,16 +94,28 @@ const Pipeline = () => {
             onChange={(e) => handlePipelineChange(e.target.value)}
             className="w-48"
           >
-            <option value="">Select Pipeline</option>
+<option value="">Select Pipeline</option>
             {pipelines.map((pipeline) => (
               <option key={pipeline.Id} value={pipeline.Id}>
                 {pipeline.name}
               </option>
-))}
+            ))}
           </Select>
-          <Button onClick={() => setShowCreateModal(true)}>
-            <ApperIcon name="Plus" className="h-4 w-4 mr-2" />
-            {t("addLead")}
+          <Button 
+            onClick={() => setShowCreateModal(true)}
+            disabled={createLoading}
+          >
+            {createLoading ? (
+              <>
+                <ApperIcon name="Loader2" className="h-4 w-4 mr-2 animate-spin" />
+                Creating...
+              </>
+            ) : (
+              <>
+                <ApperIcon name="Plus" className="h-4 w-4 mr-2" />
+                {t("addLead")}
+              </>
+            )}
           </Button>
         </div>
       </div>
@@ -137,17 +150,24 @@ const Pipeline = () => {
           trend="up"
           trendValue="+5.2%"
         />
-      </div>
+</div>
 
-{/* Pipeline Board */}
+      {/* Pipeline Board */}
       <div className="bg-transparent rounded-xl border border-white/10 p-6">
         <PipelineBoard />
       </div>
       
       <CreateLeadModal 
         isOpen={showCreateModal} 
-        onClose={() => setShowCreateModal(false)} 
-        onSuccess={loadData}
+        onClose={() => {
+          setShowCreateModal(false);
+          setCreateLoading(false);
+        }} 
+        onSuccess={() => {
+          loadData();
+          setCreateLoading(false);
+        }}
+        onStart={() => setCreateLoading(true)}
       />
     </div>
   );

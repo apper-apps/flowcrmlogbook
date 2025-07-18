@@ -11,7 +11,7 @@ import { pipelineService } from "@/services/api/pipelineService";
 import { addLead } from "@/store/slices/pipelineSlice";
 import { useLanguage } from "@/hooks/useLanguage";
 
-const CreateLeadModal = ({ isOpen, onClose, onSuccess }) => {
+const CreateLeadModal = ({ isOpen, onClose, onSuccess, onStart }) => {
   const dispatch = useDispatch();
   const { t } = useLanguage();
   const [loading, setLoading] = useState(false);
@@ -61,7 +61,10 @@ const CreateLeadModal = ({ isOpen, onClose, onSuccess }) => {
       return;
     }
 
-    setLoading(true);
+setLoading(true);
+    if (onStart) {
+      onStart();
+    }
     try {
 const leadData = {
         name: formData.name,
@@ -77,11 +80,6 @@ const leadData = {
 const newLead = await pipelineService.create(leadData);
       if (newLead) {
         dispatch(addLead(newLead));
-        toast.success("Lead created successfully");
-        onClose();
-        if (onSuccess) {
-          onSuccess();
-        }
         setFormData({
         name: "",
         company: "",
@@ -94,10 +92,15 @@ const newLead = await pipelineService.create(leadData);
         tags: "",
 notes: ""
       });
+        onClose();
+        if (onSuccess) {
+          onSuccess();
+        }
       } else {
         toast.error("Failed to create lead");
       }
     } catch (error) {
+      console.error("Error creating lead:", error);
       toast.error("Failed to create lead");
     } finally {
       setLoading(false);

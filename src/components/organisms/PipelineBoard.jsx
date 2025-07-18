@@ -22,11 +22,11 @@ const PipelineBoard = () => {
   const [viewMode, setViewMode] = useState("board"); // board or list
   const [showCreateModal, setShowCreateModal] = useState(false);
   
-  useEffect(() => {
+useEffect(() => {
     loadData();
   }, []);
 
-  const loadData = async () => {
+const loadData = async () => {
     try {
       const [leadsData, stagesData] = await Promise.all([
         pipelineService.getLeads(),
@@ -35,6 +35,7 @@ const PipelineBoard = () => {
       dispatch(setLeads(leadsData));
       setStages(stagesData);
     } catch (error) {
+      console.error("Error loading pipeline data:", error);
       toast.error(t("error"));
     }
   };
@@ -183,9 +184,12 @@ return (
               <ApperIcon name="Users" className="h-12 w-12 text-gray-400 mx-auto mb-4" />
               <h3 className="text-lg font-semibold text-white mb-2">No leads yet</h3>
               <p className="text-gray-400 mb-4">
-                Start by adding your first lead to begin tracking opportunities
+Start by adding your first lead to begin tracking opportunities
               </p>
-              <Button onClick={() => setShowCreateModal(true)}>
+              <Button 
+                onClick={() => setShowCreateModal(true)}
+                className="bg-primary hover:bg-primary/90"
+              >
                 <ApperIcon name="Plus" className="h-4 w-4 mr-2" />
                 {t("addLead")}
               </Button>
@@ -316,10 +320,13 @@ return (
         </DragDropContext>
       )}
       
-      <CreateLeadModal 
+<CreateLeadModal 
         isOpen={showCreateModal} 
         onClose={() => setShowCreateModal(false)} 
-        onSuccess={loadData}
+        onSuccess={() => {
+          loadData();
+          toast.success("Lead added to pipeline successfully");
+        }}
       />
     </div>
   );
