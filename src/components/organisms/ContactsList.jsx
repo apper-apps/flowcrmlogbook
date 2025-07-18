@@ -252,13 +252,14 @@ const filters = [
                 <ApperIcon name="Phone" className="h-4 w-4 mr-2" />
                 Call
               </Button>
-              <Button variant="outline" className="w-full">
-                <ApperIcon name="Edit" className="h-4 w-4 mr-2" />
-                Edit Contact
-              </Button>
-</Card>
-        </div>
-      )}
+<Button variant="outline" className="w-full">
+              <ApperIcon name="Edit" className="h-4 w-4 mr-2" />
+              Edit Contact
+            </Button>
+          </div>
+        </Card>
+      </div>
+    )}
       
       <CreateContactModal 
         isOpen={showCreateModal} 
