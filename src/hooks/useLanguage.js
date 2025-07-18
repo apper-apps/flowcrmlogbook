@@ -50,14 +50,12 @@ const translations = {
     forward: "Forward",
     markAsRead: "Mark as Read",
     
-    // Documents
+// Documents
     allDocuments: "All Documents",
     createDocument: "Create Document",
     templates: "Templates",
-    proposal: "Proposal",
     contract: "Contract",
     invoice: "Invoice",
-    
     // Billing
     allInvoices: "All Invoices",
     createInvoice: "Create Invoice",
@@ -141,14 +139,12 @@ const translations = {
     forward: "Reenviar",
     markAsRead: "Marcar como Leído",
     
-    // Documents
+// Documents
     allDocuments: "Todos los Documentos",
     createDocument: "Crear Documento",
     templates: "Plantillas",
-    proposal: "Propuesta",
     contract: "Contrato",
     invoice: "Factura",
-    
     // Billing
     allInvoices: "Todas las Facturas",
     createInvoice: "Crear Factura",
