@@ -6,7 +6,6 @@ const initialState = {
   error: null,
   selectedInvoice: null,
 };
-
 const billingSlice = createSlice({
   name: "billing",
   initialState,
@@ -26,7 +25,7 @@ const billingSlice = createSlice({
     addInvoice: (state, action) => {
       state.invoices.push(action.payload);
     },
-    updateInvoice: (state, action) => {
+updateInvoice: (state, action) => {
       const index = state.invoices.findIndex(invoice => invoice.Id === action.payload.Id);
       if (index !== -1) {
         state.invoices[index] = action.payload;
@@ -35,17 +34,20 @@ const billingSlice = createSlice({
     deleteInvoice: (state, action) => {
       state.invoices = state.invoices.filter(invoice => invoice.Id !== action.payload);
     },
+    addInvoice: (state, action) => {
+      state.invoices.push(action.payload);
+    },
   },
 });
 
 export const {
+  setInvoices,
   setLoading,
   setError,
-  setInvoices,
   setSelectedInvoice,
-  addInvoice,
   updateInvoice,
   deleteInvoice,
+  addInvoice,
 } = billingSlice.actions;
 
 export default billingSlice.reducer;

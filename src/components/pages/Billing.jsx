@@ -13,6 +13,7 @@ import ListView from "@/components/molecules/ListView";
 import Card from "@/components/atoms/Card";
 import Badge from "@/components/atoms/Badge";
 import Button from "@/components/atoms/Button";
+import CreateInvoiceModal from "@/components/organisms/CreateInvoiceModal";
 import useLanguage from "@/hooks/useLanguage";
 import { billingService } from "@/services/api/billingService";
 import { setSectionFilters } from "@/store/slices/uiSlice";
@@ -23,6 +24,7 @@ const Billing = () => {
   const { sectionFilters } = useSelector((state) => state.ui.listView);
   const { t } = useLanguage();
   const [showPipelineView, setShowPipelineView] = useState(false);
+  const [showCreateModal, setShowCreateModal] = useState(false);
 
   useEffect(() => {
     loadInvoices();
@@ -188,13 +190,13 @@ const Billing = () => {
     return (
       <Empty
         icon="CreditCard"
-        title="No invoices yet"
+title="No invoices yet"
         description="Create your first invoice to start tracking payments and revenue"
         actionLabel="Create Invoice"
-        onAction={() => toast.info("Invoice creation coming soon!")}
+        onAction={() => setShowCreateModal(true)}
       />
     );
-}
+  }
 
   return (
     <div className="space-y-6">
@@ -217,8 +219,8 @@ const Billing = () => {
           <Button variant="outline">
             <ApperIcon name="Download" className="h-4 w-4 mr-2" />
             Export
-          </Button>
-          <Button>
+</Button>
+          <Button onClick={() => setShowCreateModal(true)}>
             <ApperIcon name="Plus" className="h-4 w-4 mr-2" />
             Create Invoice
           </Button>
@@ -272,15 +274,20 @@ const Billing = () => {
             emptyState={
               <Empty
                 icon="CreditCard"
-                title="No invoices yet"
+title="No invoices yet"
                 description="Create your first invoice to start tracking payments and revenue"
                 actionLabel="Create Invoice"
-                onAction={() => toast.info("Invoice creation coming soon!")}
+                onAction={() => setShowCreateModal(true)}
               />
             }
           />
-        </>
+</>
       )}
+      
+      <CreateInvoiceModal 
+        isOpen={showCreateModal} 
+        onClose={() => setShowCreateModal(false)} 
+      />
     </div>
   );
 };

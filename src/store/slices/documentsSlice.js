@@ -27,25 +27,25 @@ const documentsSlice = createSlice({
     setSelectedTemplate: (state, action) => {
       state.selectedTemplate = action.payload;
     },
-    addDocument: (state, action) => {
+addDocument: (state, action) => {
       state.documents.push(action.payload);
     },
     updateDocument: (state, action) => {
-      const index = state.documents.findIndex(doc => doc.Id === action.payload.Id);
+      const index = state.documents.findIndex(doc => doc.id === action.payload.id);
       if (index !== -1) {
-        state.documents[index] = action.payload;
+        state.documents[index] = { ...state.documents[index], ...action.payload };
       }
     },
     deleteDocument: (state, action) => {
-      state.documents = state.documents.filter(doc => doc.Id !== action.payload);
+      state.documents = state.documents.filter(document => document.id !== action.payload);
     },
   },
 });
 
 export const {
+  setDocuments,
   setLoading,
   setError,
-  setDocuments,
   setTemplates,
   setSelectedTemplate,
   addDocument,

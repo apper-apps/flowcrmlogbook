@@ -10,6 +10,7 @@ import PipelineBoard from "@/components/organisms/PipelineBoard";
 import Pipeline from "@/components/pages/Pipeline";
 import StatCard from "@/components/molecules/StatCard";
 import Button from "@/components/atoms/Button";
+import ComposeMessageModal from "@/components/organisms/ComposeMessageModal";
 import useLanguage from "@/hooks/useLanguage";
 import { inboxService } from "@/services/api/inboxService";
 import { setError, setLoading, setMessages } from "@/store/slices/inboxSlice";
@@ -19,7 +20,7 @@ const Inbox = () => {
   const { messages, loading, error } = useSelector((state) => state.inbox);
   const { t } = useLanguage();
   const [showPipelineView, setShowPipelineView] = useState(false);
-
+  const [showComposeModal, setShowComposeModal] = useState(false);
   useEffect(() => {
     loadMessages();
   }, []);
@@ -71,10 +72,10 @@ const loadMessages = async () => {
     return (
       <Empty
         icon="Mail"
-        title="No messages yet"
+title="No messages yet"
         description="Your unified inbox will show messages from all connected channels"
         actionLabel="Compose Message"
-        onAction={() => toast.info("Message composition coming soon!")}
+        onAction={() => setShowComposeModal(true)}
       />
     );
   }
@@ -100,8 +101,8 @@ return (
           <Button variant="outline">
             <ApperIcon name="RefreshCw" className="h-4 w-4 mr-2" />
             Sync All
-          </Button>
-          <Button>
+</Button>
+          <Button onClick={() => setShowComposeModal(true)}>
             <ApperIcon name="Plus" className="h-4 w-4 mr-2" />
             {t("compose")}
           </Button>
@@ -144,10 +145,15 @@ return (
             />
           </div>
 
-          {/* Inbox List */}
+{/* Inbox List */}
           <InboxList />
         </>
-)}
+      )}
+      
+      <ComposeMessageModal 
+        isOpen={showComposeModal} 
+        onClose={() => setShowComposeModal(false)} 
+      />
     </div>
   );
 };

@@ -1,28 +1,29 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setContacts, setLoading, setError } from "@/store/slices/contactsSlice";
-import { setSectionFilters } from "@/store/slices/uiSlice";
-import { contactsService } from "@/services/api/contactsService";
-import ApperIcon from "@/components/ApperIcon";
-import Card from "@/components/atoms/Card";
-import Button from "@/components/atoms/Button";
-import Badge from "@/components/atoms/Badge";
-import SearchBar from "@/components/molecules/SearchBar";
-import ListView from "@/components/molecules/ListView";
-import Loading from "@/components/ui/Loading";
-import Error from "@/components/ui/Error";
-import { useLanguage } from "@/hooks/useLanguage";
+import CreateContactModal from "@/components/organisms/CreateContactModal";
 import { toast } from "react-toastify";
 import { format } from "date-fns";
+import ApperIcon from "@/components/ApperIcon";
+import Error from "@/components/ui/Error";
+import Loading from "@/components/ui/Loading";
+import ListView from "@/components/molecules/ListView";
+import SearchBar from "@/components/molecules/SearchBar";
+import Card from "@/components/atoms/Card";
+import Badge from "@/components/atoms/Badge";
+import Button from "@/components/atoms/Button";
+import { useLanguage } from "@/hooks/useLanguage";
+import { contactsService } from "@/services/api/contactsService";
+import { setSectionFilters } from "@/store/slices/uiSlice";
+import { setContacts, setError, setLoading } from "@/store/slices/contactsSlice";
 
 const ContactsList = () => {
-const dispatch = useDispatch();
+  const dispatch = useDispatch();
   const { contacts, loading, error, searchTerm } = useSelector((state) => state.contacts);
   const { sectionFilters } = useSelector((state) => state.ui.listView);
   const { t } = useLanguage();
   const [filteredContacts, setFilteredContacts] = useState([]);
   const [selectedContact, setSelectedContact] = useState(null);
-
+  const [showCreateModal, setShowCreateModal] = useState(false);
   useEffect(() => {
     loadContacts();
   }, []);
@@ -99,9 +100,12 @@ if (loading) {
           {searchTerm 
             ? "Try adjusting your search terms"
             : "Start by adding your first contact to begin building your network"
-          }
+}
         </p>
-        <Button>{t("addContact")}</Button>
+        <Button onClick={() => setShowCreateModal(true)}>
+          <ApperIcon name="Plus" className="h-4 w-4 mr-2" />
+          {t("addContact")}
+        </Button>
       </Card>
     );
   }
@@ -193,11 +197,14 @@ const filters = [
               </h3>
               <p className="text-gray-400 mb-4">
                 {searchTerm 
-                  ? "Try adjusting your search terms"
+? "Try adjusting your search terms"
                   : "Start by adding your first contact to begin building your network"
                 }
               </p>
-              <Button>{t("addContact")}</Button>
+              <Button onClick={() => setShowCreateModal(true)}>
+                <ApperIcon name="Plus" className="h-4 w-4 mr-2" />
+                {t("addContact")}
+              </Button>
             </Card>
           }
         />
@@ -249,10 +256,14 @@ const filters = [
                 <ApperIcon name="Edit" className="h-4 w-4 mr-2" />
                 Edit Contact
               </Button>
-            </div>
-          </Card>
+</Card>
         </div>
       )}
+      
+      <CreateContactModal 
+        isOpen={showCreateModal} 
+        onClose={() => setShowCreateModal(false)} 
+      />
     </div>
   );
 };

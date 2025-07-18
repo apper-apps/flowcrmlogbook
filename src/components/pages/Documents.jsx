@@ -13,17 +13,18 @@ import ListView from "@/components/molecules/ListView";
 import Card from "@/components/atoms/Card";
 import Badge from "@/components/atoms/Badge";
 import Button from "@/components/atoms/Button";
+import CreateDocumentModal from "@/components/organisms/CreateDocumentModal";
 import { useLanguage } from "@/hooks/useLanguage";
 import { documentsService } from "@/services/api/documentsService";
 import { setSectionFilters } from "@/store/slices/uiSlice";
 import { setDocuments, setError, setLoading } from "@/store/slices/documentsSlice";
-
 const Documents = () => {
-const dispatch = useDispatch();
+  const dispatch = useDispatch();
   const { documents, loading, error } = useSelector((state) => state.documents);
   const { sectionFilters } = useSelector((state) => state.ui.listView);
   const { t } = useLanguage();
   const [showPipelineView, setShowPipelineView] = useState(false);
+  const [showCreateModal, setShowCreateModal] = useState(false);
 
   useEffect(() => {
     loadDocuments();
@@ -152,10 +153,10 @@ const dispatch = useDispatch();
     return (
       <Empty
         icon="FileText"
-        title="No documents yet"
+title="No documents yet"
         description="Create your first document to start building professional proposals and contracts"
         actionLabel="Create Document"
-        onAction={() => toast.info("Document creation coming soon!")}
+        onAction={() => setShowCreateModal(true)}
       />
     );
   }
@@ -181,8 +182,8 @@ return (
           <Button variant="outline">
             <ApperIcon name="Upload" className="h-4 w-4 mr-2" />
             Import
-          </Button>
-          <Button>
+</Button>
+          <Button onClick={() => setShowCreateModal(true)}>
             <ApperIcon name="Plus" className="h-4 w-4 mr-2" />
             Create Document
           </Button>
@@ -236,16 +237,21 @@ return (
             emptyState={
               <Empty
                 icon="FileText"
-                title="No documents yet"
+title="No documents yet"
                 description="Create your first document to start building professional proposals and contracts"
                 actionLabel="Create Document"
-                onAction={() => toast.info("Document creation coming soon!")}
+                onAction={() => setShowCreateModal(true)}
               />
             }
           />
-        </>
+</>
       )}
-</div>
+      
+      <CreateDocumentModal 
+        isOpen={showCreateModal} 
+        onClose={() => setShowCreateModal(false)} 
+      />
+    </div>
   );
 };
 

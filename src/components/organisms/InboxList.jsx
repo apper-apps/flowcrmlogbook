@@ -11,18 +11,20 @@ import Input from "@/components/atoms/Input";
 import Badge from "@/components/atoms/Badge";
 import Button from "@/components/atoms/Button";
 import ListView from "@/components/molecules/ListView";
+import ComposeMessageModal from "@/components/organisms/ComposeMessageModal";
 import useLanguage from "@/hooks/useLanguage";
 import { inboxService } from "@/services/api/inboxService";
 import { setActiveThread, setError, setLoading, setMessages } from "@/store/slices/inboxSlice";
 import { setSectionFilters } from "@/store/slices/uiSlice";
 const InboxList = () => {
-const dispatch = useDispatch();
+  const dispatch = useDispatch();
   const { messages, loading, error, activeThread } = useSelector((state) => state.inbox);
   const { sectionFilters } = useSelector((state) => state.ui.listView);
   const { t } = useLanguage();
   const [filteredMessages, setFilteredMessages] = useState([]);
   const [filter, setFilter] = useState("all");
   const [replyText, setReplyText] = useState("");
+  const [showComposeModal, setShowComposeModal] = useState(false);
 
   useEffect(() => {
     loadMessages();
@@ -140,10 +142,13 @@ const dispatch = useDispatch();
         <p className="text-gray-400 mb-4">
           {filter === "unread" 
             ? "You're all caught up! No new messages to review."
-            : "Start conversations with your leads to see messages here"
+: "Start conversations with your leads to see messages here"
           }
         </p>
-        <Button>{t("compose")}</Button>
+        <Button onClick={() => setShowComposeModal(true)}>
+          <ApperIcon name="Plus" className="h-4 w-4 mr-2" />
+          {t("compose")}
+        </Button>
       </Card>
     );
   }
@@ -257,10 +262,13 @@ const filters = [
               <p className="text-gray-400 mb-4">
                 {filter === "unread" 
                   ? "You're all caught up! No new messages to review."
-                  : "Start conversations with your leads to see messages here"
+: "Start conversations with your leads to see messages here"
                 }
               </p>
-              <Button>{t("compose")}</Button>
+              <Button onClick={() => setShowComposeModal(true)}>
+                <ApperIcon name="Plus" className="h-4 w-4 mr-2" />
+                {t("compose")}
+              </Button>
             </Card>
           }
         />
@@ -310,11 +318,15 @@ const filters = [
                 </Button>
               </div>
             </div>
-          </Card>
+</Card>
         </div>
       )}
+      
+      <ComposeMessageModal 
+        isOpen={showComposeModal} 
+        onClose={() => setShowComposeModal(false)} 
+      />
     </div>
   );
 };
-
 export default InboxList;

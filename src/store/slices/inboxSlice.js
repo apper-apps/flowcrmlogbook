@@ -11,7 +11,7 @@ const initialState = {
 const inboxSlice = createSlice({
   name: "inbox",
   initialState,
-reducers: {
+  reducers: {
     setLoading: (state, action) => {
       state.loading = action.payload;
       // Clear error when starting new loading operation
@@ -39,16 +39,27 @@ reducers: {
     addMessage: (state, action) => {
       state.messages.push(action.payload);
     },
+    updateMessage: (state, action) => {
+      const index = state.messages.findIndex(msg => msg.id === action.payload.id);
+      if (index !== -1) {
+        state.messages[index] = { ...state.messages[index], ...action.payload };
+      }
+    },
+    deleteMessage: (state, action) => {
+      state.messages = state.messages.filter(message => message.id !== action.payload);
+    },
     markAsRead: (state, action) => {
-      const message = state.messages.find(msg => msg.Id === action.payload);
+      const message = state.messages.find(msg => msg.id === action.payload);
       if (message) {
         message.isRead = true;
       }
     },
     resetInboxState: (state) => {
+      state.messages = [];
+      state.threads = [];
+      state.activeThread = null;
       state.loading = false;
       state.error = null;
-      state.activeThread = null;
     },
   },
 });
@@ -60,6 +71,8 @@ export const {
   setThreads,
   setActiveThread,
   addMessage,
+  updateMessage,
+  deleteMessage,
   markAsRead,
   resetInboxState,
 } = inboxSlice.actions;

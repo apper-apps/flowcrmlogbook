@@ -11,7 +11,7 @@ const initialState = {
 const contactsSlice = createSlice({
   name: "contacts",
   initialState,
-reducers: {
+  reducers: {
     setLoading: (state, action) => {
       state.loading = action.payload;
       // Clear error when starting new loading operation

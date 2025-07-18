@@ -11,6 +11,7 @@ import Pipeline from "@/components/pages/Pipeline";
 import StatCard from "@/components/molecules/StatCard";
 import SearchBar from "@/components/molecules/SearchBar";
 import Button from "@/components/atoms/Button";
+import CreateContactModal from "@/components/organisms/CreateContactModal";
 import useLanguage from "@/hooks/useLanguage";
 import { contactsService } from "@/services/api/contactsService";
 import { setContacts, setError, setLoading, setSearchTerm } from "@/store/slices/contactsSlice";
@@ -20,7 +21,7 @@ const Contacts = () => {
   const { contacts, loading, error, searchTerm } = useSelector((state) => state.contacts);
   const { t } = useLanguage();
   const [showPipelineView, setShowPipelineView] = useState(false);
-
+  const [showCreateModal, setShowCreateModal] = useState(false);
 const loadContacts = async () => {
     dispatch(setLoading(true));
     dispatch(setError(null));
@@ -70,10 +71,10 @@ const handleSearch = (term) => {
     return (
       <Empty
         icon="Users"
-        title="No contacts yet"
+title="No contacts yet"
         description="Start building your network by adding your first contact"
         actionLabel="Add Contact"
-        onAction={() => toast.info("Contact creation coming soon!")}
+        onAction={() => setShowCreateModal(true)}
       />
     );
   }
@@ -100,8 +101,8 @@ const handleSearch = (term) => {
             placeholder="Search contacts..."
             onSearch={handleSearch}
             className="w-80"
-          />
-          <Button>
+/>
+          <Button onClick={() => setShowCreateModal(true)}>
             <ApperIcon name="Plus" className="h-4 w-4 mr-2" />
             {t("addContact")}
           </Button>
@@ -144,10 +145,15 @@ const handleSearch = (term) => {
             />
           </div>
 
-          {/* Contacts List */}
+{/* Contacts List */}
           <ContactsList />
         </>
       )}
+      
+      <CreateContactModal 
+        isOpen={showCreateModal} 
+        onClose={() => setShowCreateModal(false)} 
+      />
     </div>
   );
 };

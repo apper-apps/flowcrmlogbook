@@ -9,18 +9,18 @@ import Card from "@/components/atoms/Card";
 import Badge from "@/components/atoms/Badge";
 import Button from "@/components/atoms/Button";
 import ListView from "@/components/molecules/ListView";
+import CreateLeadModal from "@/components/organisms/CreateLeadModal";
 import { useLanguage } from "@/hooks/useLanguage";
 import { toast } from "react-toastify";
 import { format } from "date-fns";
-
 const PipelineBoard = () => {
-const dispatch = useDispatch();
+  const dispatch = useDispatch();
   const { leads, activePipeline } = useSelector((state) => state.pipeline);
   const { sectionFilters } = useSelector((state) => state.ui.listView);
   const { t } = useLanguage();
   const [stages, setStages] = useState([]);
   const [viewMode, setViewMode] = useState("board"); // board or list
-
+  const [showCreateModal, setShowCreateModal] = useState(false);
   useEffect(() => {
     loadData();
   }, []);
@@ -177,14 +177,17 @@ const filters = [
           section="pipeline"
           onFilterChange={handleFilterChange}
           selectedFilters={sectionFilters.pipeline}
-          emptyState={
+emptyState={
             <Card className="p-8 text-center">
               <ApperIcon name="Users" className="h-12 w-12 text-gray-400 mx-auto mb-4" />
               <h3 className="text-lg font-semibold text-white mb-2">No leads yet</h3>
               <p className="text-gray-400 mb-4">
                 Start by adding your first lead to begin tracking opportunities
               </p>
-              <Button>{t("addLead")}</Button>
+              <Button onClick={() => setShowCreateModal(true)}>
+                <ApperIcon name="Plus" className="h-4 w-4 mr-2" />
+                {t("addLead")}
+              </Button>
             </Card>
           }
         />
@@ -311,6 +314,11 @@ const filters = [
 </div>
         </DragDropContext>
       )}
+      
+      <CreateLeadModal 
+        isOpen={showCreateModal} 
+        onClose={() => setShowCreateModal(false)} 
+      />
     </div>
   );
 };
