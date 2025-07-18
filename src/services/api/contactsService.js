@@ -138,13 +138,13 @@ export const contactsService = {
         }),
         3,
         1000,
-        5000
+5000
       );
     } catch (error) {
       if (error.message === 'Request timeout') {
         throw new Error('Connection timeout. Please check your internet connection and try again.');
       }
       throw new Error('Failed to delete contact. Please try again.');
-throw new Error('Failed to delete contact. Please try again.');
     }
   }
+};
