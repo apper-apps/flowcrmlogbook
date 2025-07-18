@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import { setLeads, updateLead } from "@/store/slices/pipelineSlice";
 import { pipelineService } from "@/services/api/pipelineService";
 import ApperIcon from "@/components/ApperIcon";
