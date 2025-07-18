@@ -34,9 +34,6 @@ updateInvoice: (state, action) => {
     deleteInvoice: (state, action) => {
       state.invoices = state.invoices.filter(invoice => invoice.Id !== action.payload);
     },
-    addInvoice: (state, action) => {
-      state.invoices.push(action.payload);
-    },
   },
 });
 
