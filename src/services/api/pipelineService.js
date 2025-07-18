@@ -504,6 +504,63 @@ async getAll() {
       } else {
         console.error(error.message);
       }
+return null;
+    }
+  },
+
+  async createStage(stageData) {
+    try {
+      const { ApperClient } = window.ApperSDK;
+      const apperClient = new ApperClient({
+        apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
+        apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
+      });
+
+      // Only include Updateable fields
+      const updateableData = {
+        Name: stageData.name || stageData.Name,
+        Tags: Array.isArray(stageData.tags) ? stageData.tags.join(',') : stageData.Tags || '',
+        color: stageData.color,
+        order: stageData.order || 1
+      };
+
+      const params = {
+        records: [updateableData]
+      };
+
+      const response = await apperClient.createRecord("stage", params);
+      
+      if (!response.success) {
+        console.error(response.message);
+        toast.error(response.message);
+        return null;
+      }
+
+      if (response.results) {
+        const successfulRecords = response.results.filter(result => result.success);
+        const failedRecords = response.results.filter(result => !result.success);
+        
+        if (failedRecords.length > 0) {
+          console.error(`Failed to create stage ${failedRecords.length} records:${JSON.stringify(failedRecords)}`);
+          
+          failedRecords.forEach(record => {
+            record.errors?.forEach(error => {
+              toast.error(`${error.fieldLabel}: ${error.message}`);
+            });
+            if (record.message) toast.error(record.message);
+          });
+        }
+        
+        return successfulRecords.length > 0 ? successfulRecords[0].data : null;
+      }
+
+      return null;
+    } catch (error) {
+      if (error?.response?.data?.message) {
+        console.error("Error creating stage:", error?.response?.data?.message);
+      } else {
+        console.error(error.message);
+      }
       return null;
     }
   }

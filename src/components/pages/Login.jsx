@@ -17,9 +17,9 @@ function Login() {
     }
   }, [isInitialized]);
   
-  return (
+return (
     <div className="flex min-h-screen items-center justify-center bg-dark">
-      <div className="w-full max-w-md space-y-8 p-8 bg-surface rounded-lg shadow-md">
+      <div className="w-full max-w-md space-y-8 p-8 glass-dark rounded-lg shadow-md">
         <div className="flex flex-col gap-6 items-center justify-center">
           <div className="w-14 h-14 shrink-0 rounded-xl flex items-center justify-center bg-gradient-to-r from-primary to-secondary text-white text-2xl 2xl:text-3xl font-bold">
             F
@@ -28,14 +28,14 @@ function Login() {
             <div className="text-center text-lg xl:text-xl font-bold text-white">
               Sign in to FlowCRM
             </div>
-            <div className="text-center text-sm text-gray-400">
+            <div className="text-center text-sm text-gray-300">
               Welcome back, please sign in to continue
             </div>
           </div>
         </div>
         <div id="authentication" />
         <div className="text-center mt-4">
-          <p className="text-sm text-gray-400">
+          <p className="text-sm text-gray-300">
             Don't have an account?{' '}
             <Link to="/signup" className="font-medium text-primary hover:text-primary/80">
               Sign up

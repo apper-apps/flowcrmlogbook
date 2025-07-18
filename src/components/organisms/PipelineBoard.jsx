@@ -20,9 +20,10 @@ const PipelineBoard = () => {
   const { t } = useLanguage();
   const [stages, setStages] = useState([]);
   const [viewMode, setViewMode] = useState("board"); // board or list
-  const [showCreateModal, setShowCreateModal] = useState(false);
+const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showCreateStageModal, setShowCreateStageModal] = useState(false);
   
-useEffect(() => {
+  useEffect(() => {
     loadData();
   }, []);
 
@@ -37,6 +38,30 @@ const loadData = async () => {
     } catch (error) {
       console.error("Error loading pipeline data:", error);
       toast.error(t("error"));
+    }
+  };
+
+  const createStage = async () => {
+    const stageName = prompt("Enter stage name:");
+    if (!stageName || !stageName.trim()) {
+      return;
+    }
+
+    try {
+      const newStage = await pipelineService.createStage({
+        name: stageName.trim(),
+        color: "#6366F1",
+        order: stages.length + 1
+      });
+
+      if (newStage) {
+        // Reload stages to get the updated list
+        const updatedStages = await pipelineService.getStages();
+        setStages(updatedStages);
+        toast.success("Stage created successfully!");
+      }
+    } catch (error) {
+      toast.error("Failed to create stage");
     }
   };
 
@@ -157,7 +182,7 @@ const renderLeadItem = (lead, { rowSize }) => {
 
 return (
     <div className="h-full space-y-6">
-      {/* View Mode Toggle */}
+{/* View Mode Toggle */}
       <div className="flex items-center gap-4">
         <Button
           variant={viewMode === "board" ? "primary" : "ghost"}
@@ -174,6 +199,14 @@ return (
         >
           <ApperIcon name="List" className="h-4 w-4 mr-2" />
           List View
+        </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={createStage}
+        >
+          <ApperIcon name="Plus" className="h-4 w-4 mr-2" />
+          Add Stage
         </Button>
       </div>
 
@@ -321,12 +354,12 @@ Start by adding your first lead to begin tracking opportunities
                 )}
               </Droppable>
             </div>
-          ))}
+))}
           </div>
         </DragDropContext>
       )}
       
-<CreateLeadModal 
+      <CreateLeadModal 
         isOpen={showCreateModal} 
         onClose={() => setShowCreateModal(false)} 
         onSuccess={() => {

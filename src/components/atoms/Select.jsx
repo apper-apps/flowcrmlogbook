@@ -15,7 +15,7 @@ const Select = forwardRef(({ className, label, error, children, ...props }, ref)
           error && "border-error focus:ring-error/50 focus:border-error",
           className
         )}
-        ref={ref}
+ref={ref}
         {...props}
       >
         {children}
