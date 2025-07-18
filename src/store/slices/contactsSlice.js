@@ -12,14 +12,21 @@ const contactsSlice = createSlice({
   name: "contacts",
   initialState,
   reducers: {
-    setLoading: (state, action) => {
+setLoading: (state, action) => {
       state.loading = action.payload;
     },
     setError: (state, action) => {
       state.error = action.payload;
+      // Reset loading state when error occurs
+      if (action.payload) {
+        state.loading = false;
+      }
     },
     setContacts: (state, action) => {
       state.contacts = action.payload;
+      // Reset error and loading state on successful data load
+      state.error = null;
+      state.loading = false;
     },
     setSearchTerm: (state, action) => {
       state.searchTerm = action.payload;

@@ -21,16 +21,21 @@ const Contacts = () => {
   useEffect(() => {
     loadContacts();
   }, []);
-
-  const loadContacts = async () => {
+const loadContacts = async () => {
     dispatch(setLoading(true));
     dispatch(setError(null));
     try {
       const data = await contactsService.getAll();
       dispatch(setContacts(data));
+      dispatch(setError(null)); // Ensure error is cleared on success
     } catch (error) {
+      console.error('Contacts loading error:', error);
       dispatch(setError(error.message));
-      toast.error(t("error"));
+      dispatch(setLoading(false)); // Ensure loading is reset on error
+      toast.error(error.message.includes('timeout') ? 
+        'Connection timeout. Please try again.' : 
+        t("error"));
+      return; // Exit early to prevent finally block from resetting loading
     } finally {
       dispatch(setLoading(false));
     }
