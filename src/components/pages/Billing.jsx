@@ -96,6 +96,20 @@ const Billing = () => {
     dispatch(setSectionFilters({ section: "billing", filters }));
   };
 
+// Helper function to safely format dates
+  const formatDate = (dateValue, formatString = "MMM dd, yyyy") => {
+    if (!dateValue) return "N/A";
+    
+    try {
+      const date = new Date(dateValue);
+      // Check if date is valid
+      if (isNaN(date.getTime())) return "N/A";
+      return format(date, formatString);
+    } catch (error) {
+      return "N/A";
+    }
+  };
+
   const renderInvoiceItem = (invoice, { rowSize }) => (
     <Card className="hover:shadow-lg transition-all duration-200">
       <div className="flex items-center justify-between">
@@ -112,11 +126,11 @@ const Billing = () => {
               <div className="flex items-center gap-4 mt-1">
                 <div className="flex items-center gap-1 text-xs text-gray-400">
                   <ApperIcon name="Calendar" className="h-3 w-3" />
-                  Created: {format(new Date(invoice.createdAt), "MMM dd, yyyy")}
+                  Created: {formatDate(invoice.createdAt)}
                 </div>
                 <div className="flex items-center gap-1 text-xs text-gray-400">
                   <ApperIcon name="Clock" className="h-3 w-3" />
-                  Due: {format(new Date(invoice.dueDate), "MMM dd, yyyy")}
+                  Due: {formatDate(invoice.dueDate)}
                 </div>
               </div>
             )}
@@ -161,7 +175,7 @@ const Billing = () => {
               {invoice.status === "paid" && invoice.paidAt && (
                 <div className="flex items-center gap-1 text-success">
                   <ApperIcon name="Check" className="h-3 w-3" />
-                  Paid on {format(new Date(invoice.paidAt), "MMM dd, yyyy")}
+                  Paid on {formatDate(invoice.paidAt)}
                 </div>
               )}
             </div>
