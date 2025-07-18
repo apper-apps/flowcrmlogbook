@@ -36,8 +36,11 @@ const pipelineSlice = createSlice({
     addLead: (state, action) => {
       state.leads.push(action.payload);
     },
-    deleteLead: (state, action) => {
+deleteLead: (state, action) => {
       state.leads = state.leads.filter(lead => lead.Id !== action.payload);
+    },
+    addPipeline: (state, action) => {
+      state.pipelines.push(action.payload);
     },
   },
 });
@@ -51,6 +54,7 @@ export const {
   updateLead,
   addLead,
   deleteLead,
+  addPipeline,
 } = pipelineSlice.actions;
 
 export default pipelineSlice.reducer;

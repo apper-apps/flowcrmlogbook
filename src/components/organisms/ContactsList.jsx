@@ -321,7 +321,7 @@ const filters = [
         onClose={() => setShowCreateModal(false)} 
       />
       
-      <CreateLeadModal 
+<CreateLeadModal 
         isOpen={showCreateLeadModal} 
         onClose={() => setShowCreateLeadModal(false)}
         onSuccess={() => {
@@ -332,7 +332,10 @@ const filters = [
           name: selectedContact.Name,
           company: selectedContact.company,
           email: selectedContact.email,
-          phone: selectedContact.phone
+          phone: selectedContact.phone,
+          stage: 'new',
+          source: 'direct',
+          value: 0
         } : undefined}
       />
     </div>
