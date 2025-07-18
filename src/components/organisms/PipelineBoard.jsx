@@ -310,9 +310,9 @@ const filters = [
                   </div>
                 )}
               </Droppable>
-            </div>
-          ))}
 </div>
+          ))}
+          </div>
         </DragDropContext>
       )}
       
