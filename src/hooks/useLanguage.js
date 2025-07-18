@@ -1,4 +1,4 @@
-import { useSelector } from "react-redux";
+import { useSelector } from 'react-redux';
 
 const translations = {
   en: {
@@ -16,79 +16,68 @@ const translations = {
     allPipelines: "All Pipelines",
     stages: "Stages",
     leads: "Leads",
-    totalValue: "Total Value",
-    conversionRate: "Conversion Rate",
-    addLead: "Add Lead",
-    editLead: "Edit Lead",
-    deleteLead: "Delete Lead",
-    
-    // Stages
-    cold: "Cold",
-    engaged: "Engaged",
-    initialContact: "Initial Contact",
-    qualified: "Qualified",
-    proposal: "Proposal",
-    negotiation: "Negotiation",
-    closedWon: "Closed Won",
-    closedLost: "Closed Lost",
+    deals: "Deals",
+    newLead: "New Lead",
+    newDeal: "New Deal",
+    moveToStage: "Move to Stage",
     
     // Contacts
     allContacts: "All Contacts",
-    addContact: "Add Contact",
+    newContact: "New Contact",
     editContact: "Edit Contact",
     deleteContact: "Delete Contact",
-    company: "Company",
-    email: "Email",
-    phone: "Phone",
-    lastActivity: "Last Activity",
+    contactInfo: "Contact Information",
     
     // Inbox
-    allMessages: "All Messages",
-    unreadMessages: "Unread Messages",
-    compose: "Compose",
+    messages: "Messages",
+    newMessage: "New Message",
     reply: "Reply",
     forward: "Forward",
+    delete: "Delete",
     markAsRead: "Mark as Read",
+    markAsUnread: "Mark as Unread",
     
-// Documents
+    // Documents
     allDocuments: "All Documents",
-    createDocument: "Create Document",
-    templates: "Templates",
-    contract: "Contract",
-    invoice: "Invoice",
+    newDocument: "New Document",
+    upload: "Upload",
+    download: "Download",
+    share: "Share",
+    
     // Billing
-    allInvoices: "All Invoices",
-    createInvoice: "Create Invoice",
+    invoices: "Invoices",
+    newInvoice: "New Invoice",
     paid: "Paid",
     pending: "Pending",
     overdue: "Overdue",
-    total: "Total",
-    dueDate: "Due Date",
-    
-    // Reports
-    salesReport: "Sales Report",
-    activityReport: "Activity Report",
-    conversionReport: "Conversion Report",
     
     // Common
     save: "Save",
     cancel: "Cancel",
-    delete: "Delete",
     edit: "Edit",
-    view: "View",
+    delete: "Delete",
     search: "Search",
     filter: "Filter",
-    export: "Export",
-    import: "Import",
-    loading: "Loading...",
-    noData: "No data available",
-    error: "An error occurred",
-    success: "Success",
+    sort: "Sort",
     name: "Name",
-    value: "Value",
+    email: "Email",
+    phone: "Phone",
+    company: "Company",
     status: "Status",
     date: "Date",
-    actions: "Actions",
+    amount: "Amount",
+    total: "Total",
+    subtotal: "Subtotal",
+    tax: "Tax",
+    loading: "Loading...",
+    error: "Error",
+    success: "Success",
+    warning: "Warning",
+    info: "Info",
+    noData: "No data available",
+    confirm: "Confirm",
+    yes: "Yes",
+    no: "No"
   },
   es: {
     // Navigation
@@ -104,89 +93,93 @@ const translations = {
     pipelines: "Pipelines",
     allPipelines: "Todos los Pipelines",
     stages: "Etapas",
-    leads: "Leads",
-    totalValue: "Valor Total",
-    conversionRate: "Tasa de Conversión",
-    addLead: "Agregar Lead",
-    editLead: "Editar Lead",
-    deleteLead: "Eliminar Lead",
-    
-    // Stages
-    cold: "Frío",
-    engaged: "Comprometido",
-    initialContact: "Contacto Inicial",
-    qualified: "Calificado",
-    proposal: "Propuesta",
-    negotiation: "Negociación",
-    closedWon: "Ganado",
-    closedLost: "Perdido",
+    leads: "Prospectos",
+    deals: "Negocios",
+    newLead: "Nuevo Prospecto",
+    newDeal: "Nuevo Negocio",
+    moveToStage: "Mover a Etapa",
     
     // Contacts
     allContacts: "Todos los Contactos",
-    addContact: "Agregar Contacto",
+    newContact: "Nuevo Contacto",
     editContact: "Editar Contacto",
     deleteContact: "Eliminar Contacto",
-    company: "Empresa",
-    email: "Correo",
-    phone: "Teléfono",
-    lastActivity: "Última Actividad",
+    contactInfo: "Información de Contacto",
     
     // Inbox
-    allMessages: "Todos los Mensajes",
-    unreadMessages: "Mensajes sin Leer",
-    compose: "Redactar",
+    messages: "Mensajes",
+    newMessage: "Nuevo Mensaje",
     reply: "Responder",
     forward: "Reenviar",
+    delete: "Eliminar",
     markAsRead: "Marcar como Leído",
+    markAsUnread: "Marcar como No Leído",
     
-// Documents
+    // Documents
     allDocuments: "Todos los Documentos",
-    createDocument: "Crear Documento",
-    templates: "Plantillas",
-    contract: "Contrato",
-    invoice: "Factura",
+    newDocument: "Nuevo Documento",
+    upload: "Subir",
+    download: "Descargar",
+    share: "Compartir",
+    
     // Billing
-    allInvoices: "Todas las Facturas",
-    createInvoice: "Crear Factura",
+    invoices: "Facturas",
+    newInvoice: "Nueva Factura",
     paid: "Pagado",
     pending: "Pendiente",
     overdue: "Vencido",
-    total: "Total",
-    dueDate: "Fecha de Vencimiento",
-    
-    // Reports
-    salesReport: "Reporte de Ventas",
-    activityReport: "Reporte de Actividad",
-    conversionReport: "Reporte de Conversión",
     
     // Common
     save: "Guardar",
     cancel: "Cancelar",
-    delete: "Eliminar",
     edit: "Editar",
-    view: "Ver",
+    delete: "Eliminar",
     search: "Buscar",
     filter: "Filtrar",
-    export: "Exportar",
-    import: "Importar",
-    loading: "Cargando...",
-    noData: "No hay datos disponibles",
-    error: "Ocurrió un error",
-    success: "Éxito",
+    sort: "Ordenar",
     name: "Nombre",
-    value: "Valor",
+    email: "Correo",
+    phone: "Teléfono",
+    company: "Empresa",
     status: "Estado",
     date: "Fecha",
-    actions: "Acciones",
-  },
+    amount: "Cantidad",
+    total: "Total",
+    subtotal: "Subtotal",
+    tax: "Impuesto",
+    loading: "Cargando...",
+    error: "Error",
+    success: "Éxito",
+    warning: "Advertencia",
+    info: "Información",
+    noData: "No hay datos disponibles",
+    confirm: "Confirmar",
+    yes: "Sí",
+    no: "No"
+  }
 };
 
 export const useLanguage = () => {
-  const language = useSelector((state) => state.ui.language);
+  const language = useSelector((state) => state.ui?.language || 'en');
   
   const t = (key) => {
-    return translations[language][key] || key;
+    try {
+      const translation = translations[language]?.[key] || translations.en[key] || key;
+      return translation;
+    } catch (error) {
+      console.warn(`Translation missing for key: ${key}`);
+      return key;
+    }
   };
   
-  return { t, language };
+  const currentLanguage = language;
+  
+  return {
+    t,
+    currentLanguage,
+    isEnglish: language === 'en',
+    isSpanish: language === 'es'
+  };
 };
+
+export default useLanguage;
