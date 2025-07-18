@@ -1,0 +1,89 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import "react-toastify/dist/ReactToastify.css";
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: #0F172A;
+  color: #E2E8F0;
+}
+
+.glass-effect {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.glass-dark {
+  background: rgba(30, 41, 59, 0.8);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.gradient-text {
+  background: linear-gradient(135deg, #EC4899, #8B5CF6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.gradient-border {
+  background: linear-gradient(135deg, #EC4899, #8B5CF6);
+  padding: 1px;
+  border-radius: 8px;
+}
+
+.gradient-border > * {
+  background: #0F172A;
+  border-radius: 7px;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Toast styling */
+.Toastify__toast-container {
+  width: 400px;
+  font-family: 'Inter', sans-serif;
+}
+
+.Toastify__toast {
+  background: rgba(30, 41, 59, 0.95);
+  backdrop-filter: blur(20px);
+  color: #E2E8F0;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.Toastify__toast--success {
+  border-left: 4px solid #10B981;
+}
+
+.Toastify__toast--error {
+  border-left: 4px solid #EF4444;
+}
+
+.Toastify__toast--warning {
+  border-left: 4px solid #F59E0B;
+}
+
+.Toastify__toast--info {
+  border-left: 4px solid #3B82F6;
+}

@@ -1,0 +1,50 @@
+[
+  {
+    "Id": 1,
+    "name": "Cold",
+    "color": "#6B7280",
+    "order": 1
+  },
+  {
+    "Id": 2,
+    "name": "Engaged",
+    "color": "#3B82F6",
+    "order": 2
+  },
+  {
+    "Id": 3,
+    "name": "Initial Contact",
+    "color": "#8B5CF6",
+    "order": 3
+  },
+  {
+    "Id": 4,
+    "name": "Qualified",
+    "color": "#EC4899",
+    "order": 4
+  },
+  {
+    "Id": 5,
+    "name": "Proposal",
+    "color": "#F59E0B",
+    "order": 5
+  },
+  {
+    "Id": 6,
+    "name": "Negotiation",
+    "color": "#EF4444",
+    "order": 6
+  },
+  {
+    "Id": 7,
+    "name": "Closed Won",
+    "color": "#10B981",
+    "order": 7
+  },
+  {
+    "Id": 8,
+    "name": "Closed Lost",
+    "color": "#6B7280",
+    "order": 8
+  }
+]

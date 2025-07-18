@@ -1,0 +1,16 @@
+[
+  {
+    "Id": 1,
+    "name": "Sales Pipeline",
+    "stages": ["cold", "engaged", "initialContact", "qualified", "proposal", "negotiation", "closedWon", "closedLost"],
+    "color": "#6366F1",
+    "isDefault": true
+  },
+  {
+    "Id": 2,
+    "name": "Enterprise Pipeline",
+    "stages": ["prospect", "discovery", "demo", "proposal", "negotiation", "contract", "closedWon", "closedLost"],
+    "color": "#8B5CF6",
+    "isDefault": false
+  }
+]

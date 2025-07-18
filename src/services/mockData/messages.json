@@ -1,0 +1,74 @@
+[
+  {
+    "Id": 1,
+    "channel": "email",
+    "contactId": 1,
+    "contactName": "John Smith",
+    "subject": "Enterprise Solution Inquiry",
+    "body": "Hi, I'm interested in learning more about your enterprise solution. Could we schedule a demo?",
+    "timestamp": "2024-01-15T10:30:00Z",
+    "isRead": false,
+    "threadId": "thread_1",
+    "isOutbound": false
+  },
+  {
+    "Id": 2,
+    "channel": "linkedin",
+    "contactId": 2,
+    "contactName": "Sarah Johnson",
+    "subject": "Connection Request",
+    "body": "Thanks for connecting! I'd like to discuss how your solution could help our startup scale.",
+    "timestamp": "2024-01-14T14:20:00Z",
+    "isRead": true,
+    "threadId": "thread_2",
+    "isOutbound": false
+  },
+  {
+    "Id": 3,
+    "channel": "email",
+    "contactId": 3,
+    "contactName": "Michael Brown",
+    "subject": "Follow-up on Demo",
+    "body": "The demo went great! Our team is very interested. What are the next steps?",
+    "timestamp": "2024-01-13T16:45:00Z",
+    "isRead": false,
+    "threadId": "thread_3",
+    "isOutbound": false
+  },
+  {
+    "Id": 4,
+    "channel": "whatsapp",
+    "contactId": 4,
+    "contactName": "Emily Davis",
+    "subject": "Quick Question",
+    "body": "Hi! Quick question about the pricing structure. Can you send me the details?",
+    "timestamp": "2024-01-12T09:15:00Z",
+    "isRead": true,
+    "threadId": "thread_4",
+    "isOutbound": false
+  },
+  {
+    "Id": 5,
+    "channel": "email",
+    "contactId": 5,
+    "contactName": "David Wilson",
+    "subject": "Contract Terms Discussion",
+    "body": "We've reviewed the proposal and have a few questions about the contract terms.",
+    "timestamp": "2024-01-11T11:30:00Z",
+    "isRead": false,
+    "threadId": "thread_5",
+    "isOutbound": false
+  },
+  {
+    "Id": 6,
+    "channel": "email",
+    "contactId": 6,
+    "contactName": "Lisa Anderson",
+    "subject": "Ready to Move Forward",
+    "body": "Everything looks good on our end. We're ready to sign the contract!",
+    "timestamp": "2024-01-10T13:00:00Z",
+    "isRead": true,
+    "threadId": "thread_6",
+    "isOutbound": false
+  }
+]

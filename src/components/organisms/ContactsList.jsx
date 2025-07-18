@@ -1,0 +1,240 @@
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { setContacts, setLoading, setError } from "@/store/slices/contactsSlice";
+import { contactsService } from "@/services/api/contactsService";
+import ApperIcon from "@/components/ApperIcon";
+import Card from "@/components/atoms/Card";
+import Button from "@/components/atoms/Button";
+import Badge from "@/components/atoms/Badge";
+import SearchBar from "@/components/molecules/SearchBar";
+import { useLanguage } from "@/hooks/useLanguage";
+import { toast } from "react-toastify";
+import { format } from "date-fns";
+
+const ContactsList = () => {
+  const dispatch = useDispatch();
+  const { contacts, loading, error, searchTerm } = useSelector((state) => state.contacts);
+  const { t } = useLanguage();
+  const [filteredContacts, setFilteredContacts] = useState([]);
+  const [selectedContact, setSelectedContact] = useState(null);
+
+  useEffect(() => {
+    loadContacts();
+  }, []);
+
+  useEffect(() => {
+    filterContacts();
+  }, [contacts, searchTerm]);
+
+  const loadContacts = async () => {
+    dispatch(setLoading(true));
+    dispatch(setError(null));
+    try {
+      const data = await contactsService.getAll();
+      dispatch(setContacts(data));
+    } catch (error) {
+      dispatch(setError(error.message));
+      toast.error(t("error"));
+    } finally {
+      dispatch(setLoading(false));
+    }
+  };
+
+  const filterContacts = () => {
+    if (!searchTerm) {
+      setFilteredContacts(contacts);
+      return;
+    }
+
+    const filtered = contacts.filter(contact =>
+      contact.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      contact.company.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      contact.email.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    setFilteredContacts(filtered);
+  };
+
+  const handleSearch = (term) => {
+    // Search is handled by Redux state
+  };
+
+  const handleContactClick = (contact) => {
+    setSelectedContact(contact);
+  };
+
+  const getStatusColor = (status) => {
+    switch (status) {
+      case "Active":
+        return "success";
+      case "Inactive":
+        return "error";
+      case "Pending":
+        return "warning";
+      default:
+        return "default";
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="space-y-4">
+        {[...Array(5)].map((_, i) => (
+          <Card key={i} className="p-4">
+            <div className="animate-pulse">
+              <div className="flex items-center gap-4">
+                <div className="w-10 h-10 bg-gray-700 rounded-full"></div>
+                <div className="space-y-2 flex-1">
+                  <div className="h-4 bg-gray-700 rounded w-1/4"></div>
+                  <div className="h-3 bg-gray-700 rounded w-1/3"></div>
+                </div>
+              </div>
+            </div>
+          </Card>
+        ))}
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <Card className="p-8 text-center">
+        <ApperIcon name="AlertCircle" className="h-12 w-12 text-error mx-auto mb-4" />
+        <h3 className="text-lg font-semibold text-white mb-2">{t("error")}</h3>
+        <p className="text-gray-400 mb-4">{error}</p>
+        <Button onClick={loadContacts}>{t("retry")}</Button>
+      </Card>
+    );
+  }
+
+  if (filteredContacts.length === 0) {
+    return (
+      <Card className="p-8 text-center">
+        <ApperIcon name="Users" className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+        <h3 className="text-lg font-semibold text-white mb-2">
+          {searchTerm ? "No contacts found" : "No contacts yet"}
+        </h3>
+        <p className="text-gray-400 mb-4">
+          {searchTerm 
+            ? "Try adjusting your search terms"
+            : "Start by adding your first contact to begin building your network"
+          }
+        </p>
+        <Button>{t("addContact")}</Button>
+      </Card>
+    );
+  }
+
+  return (
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="lg:col-span-2 space-y-4">
+        {filteredContacts.map((contact) => (
+          <Card
+            key={contact.Id}
+            className="p-4 cursor-pointer hover:shadow-lg transition-all duration-200"
+            onClick={() => handleContactClick(contact)}
+          >
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <div className="w-10 h-10 rounded-full bg-gradient-to-r from-primary to-secondary flex items-center justify-center">
+                  <span className="text-sm font-medium text-white">
+                    {contact.name.charAt(0)}
+                  </span>
+                </div>
+                <div>
+                  <h3 className="font-semibold text-white">{contact.name}</h3>
+                  <p className="text-sm text-gray-400">{contact.company}</p>
+                  <div className="flex items-center gap-4 mt-1">
+                    <div className="flex items-center gap-1 text-xs text-gray-400">
+                      <ApperIcon name="Mail" className="h-3 w-3" />
+                      {contact.email}
+                    </div>
+                    <div className="flex items-center gap-1 text-xs text-gray-400">
+                      <ApperIcon name="Phone" className="h-3 w-3" />
+                      {contact.phone}
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="flex items-center gap-4">
+                <div className="text-right">
+                  <Badge variant={getStatusColor(contact.status)}>
+                    {contact.status}
+                  </Badge>
+                  <p className="text-xs text-gray-400 mt-1">
+                    {format(new Date(contact.lastActivity), "MMM dd, yyyy")}
+                  </p>
+                </div>
+                
+                <div className="flex items-center gap-1">
+                  <Button variant="ghost" size="sm">
+                    <ApperIcon name="Mail" className="h-4 w-4" />
+                  </Button>
+                  <Button variant="ghost" size="sm">
+                    <ApperIcon name="Phone" className="h-4 w-4" />
+                  </Button>
+                  <Button variant="ghost" size="sm">
+                    <ApperIcon name="MoreHorizontal" className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </Card>
+        ))}
+      </div>
+      
+      {selectedContact && (
+        <div className="lg:col-span-1">
+          <Card className="p-6 sticky top-6">
+            <div className="text-center mb-6">
+              <div className="w-16 h-16 rounded-full bg-gradient-to-r from-primary to-secondary flex items-center justify-center mx-auto mb-4">
+                <span className="text-xl font-bold text-white">
+                  {selectedContact.name.charAt(0)}
+                </span>
+              </div>
+              <h3 className="text-xl font-semibold text-white">{selectedContact.name}</h3>
+              <p className="text-gray-400">{selectedContact.company}</p>
+              <Badge variant={getStatusColor(selectedContact.status)} className="mt-2">
+                {selectedContact.status}
+              </Badge>
+            </div>
+            
+            <div className="space-y-4">
+              <div className="flex items-center gap-3">
+                <ApperIcon name="Mail" className="h-4 w-4 text-gray-400" />
+                <span className="text-sm text-white">{selectedContact.email}</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <ApperIcon name="Phone" className="h-4 w-4 text-gray-400" />
+                <span className="text-sm text-white">{selectedContact.phone}</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <ApperIcon name="Clock" className="h-4 w-4 text-gray-400" />
+                <span className="text-sm text-white">
+                  Last activity: {format(new Date(selectedContact.lastActivity), "MMM dd, yyyy")}
+                </span>
+              </div>
+            </div>
+            
+            <div className="mt-6 space-y-2">
+              <Button className="w-full">
+                <ApperIcon name="Mail" className="h-4 w-4 mr-2" />
+                Send Email
+              </Button>
+              <Button variant="outline" className="w-full">
+                <ApperIcon name="Phone" className="h-4 w-4 mr-2" />
+                Call
+              </Button>
+              <Button variant="outline" className="w-full">
+                <ApperIcon name="Edit" className="h-4 w-4 mr-2" />
+                Edit Contact
+              </Button>
+            </div>
+          </Card>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default ContactsList;

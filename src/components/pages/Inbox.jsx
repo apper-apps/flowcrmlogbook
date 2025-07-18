@@ -1,0 +1,133 @@
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { setMessages, setLoading, setError } from "@/store/slices/inboxSlice";
+import { inboxService } from "@/services/api/inboxService";
+import ApperIcon from "@/components/ApperIcon";
+import Button from "@/components/atoms/Button";
+import StatCard from "@/components/molecules/StatCard";
+import InboxList from "@/components/organisms/InboxList";
+import Loading from "@/components/ui/Loading";
+import Error from "@/components/ui/Error";
+import Empty from "@/components/ui/Empty";
+import { useLanguage } from "@/hooks/useLanguage";
+import { toast } from "react-toastify";
+
+const Inbox = () => {
+  const dispatch = useDispatch();
+  const { messages, loading, error } = useSelector((state) => state.inbox);
+  const { t } = useLanguage();
+
+  useEffect(() => {
+    loadMessages();
+  }, []);
+
+  const loadMessages = async () => {
+    dispatch(setLoading(true));
+    dispatch(setError(null));
+    try {
+      const data = await inboxService.getAll();
+      dispatch(setMessages(data));
+    } catch (error) {
+      dispatch(setError(error.message));
+      toast.error(t("error"));
+    } finally {
+      dispatch(setLoading(false));
+    }
+  };
+
+  const getUnreadCount = () => {
+    return messages.filter(msg => !msg.isRead).length;
+  };
+
+  const getTodayMessages = () => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return messages.filter(msg => new Date(msg.timestamp) >= today).length;
+  };
+
+  const getResponseTime = () => {
+    // Mock calculation - in real app, calculate based on actual response times
+    return "1.2h";
+  };
+
+  if (loading) {
+    return <Loading />;
+  }
+
+  if (error) {
+    return <Error message={error} onRetry={loadMessages} />;
+  }
+
+  if (messages.length === 0) {
+    return (
+      <Empty
+        icon="Mail"
+        title="No messages yet"
+        description="Your unified inbox will show messages from all connected channels"
+        actionLabel="Compose Message"
+        onAction={() => toast.info("Message composition coming soon!")}
+      />
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold text-white">{t("inbox")}</h1>
+          <p className="text-gray-400 mt-1">
+            Unified inbox for all your communication channels
+          </p>
+        </div>
+        <div className="flex items-center gap-4">
+          <Button variant="outline">
+            <ApperIcon name="RefreshCw" className="h-4 w-4 mr-2" />
+            Sync All
+          </Button>
+          <Button>
+            <ApperIcon name="Plus" className="h-4 w-4 mr-2" />
+            {t("compose")}
+          </Button>
+        </div>
+      </div>
+
+      {/* Stats */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <StatCard
+          title="Total Messages"
+          value={messages.length}
+          icon="Mail"
+          trend="up"
+          trendValue="+23"
+        />
+        <StatCard
+          title="Unread Messages"
+          value={getUnreadCount()}
+          icon="MailOpen"
+          trend="down"
+          trendValue="-5"
+        />
+        <StatCard
+          title="Today's Messages"
+          value={getTodayMessages()}
+          icon="Clock"
+          trend="up"
+          trendValue="+8"
+        />
+        <StatCard
+          title="Avg. Response Time"
+          value={getResponseTime()}
+          icon="Timer"
+          trend="down"
+          trendValue="-0.3h"
+        />
+      </div>
+
+      {/* Inbox List */}
+      <InboxList />
+    </div>
+  );
+};
+
+export default Inbox;

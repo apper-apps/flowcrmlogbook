@@ -1,0 +1,238 @@
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { setInvoices, setLoading, setError } from "@/store/slices/billingSlice";
+import { billingService } from "@/services/api/billingService";
+import ApperIcon from "@/components/ApperIcon";
+import Button from "@/components/atoms/Button";
+import Card from "@/components/atoms/Card";
+import Badge from "@/components/atoms/Badge";
+import StatCard from "@/components/molecules/StatCard";
+import Loading from "@/components/ui/Loading";
+import Error from "@/components/ui/Error";
+import Empty from "@/components/ui/Empty";
+import { useLanguage } from "@/hooks/useLanguage";
+import { toast } from "react-toastify";
+import { format } from "date-fns";
+
+const Billing = () => {
+  const dispatch = useDispatch();
+  const { invoices, loading, error } = useSelector((state) => state.billing);
+  const { t } = useLanguage();
+
+  useEffect(() => {
+    loadInvoices();
+  }, []);
+
+  const loadInvoices = async () => {
+    dispatch(setLoading(true));
+    dispatch(setError(null));
+    try {
+      const data = await billingService.getAll();
+      dispatch(setInvoices(data));
+    } catch (error) {
+      dispatch(setError(error.message));
+      toast.error(t("error"));
+    } finally {
+      dispatch(setLoading(false));
+    }
+  };
+
+  const getTotalRevenue = () => {
+    return invoices
+      .filter(invoice => invoice.status === "paid")
+      .reduce((sum, invoice) => sum + invoice.total, 0);
+  };
+
+  const getPendingAmount = () => {
+    return invoices
+      .filter(invoice => invoice.status === "pending")
+      .reduce((sum, invoice) => sum + invoice.total, 0);
+  };
+
+  const getOverdueAmount = () => {
+    return invoices
+      .filter(invoice => invoice.status === "overdue")
+      .reduce((sum, invoice) => sum + invoice.total, 0);
+  };
+
+  const getStatusColor = (status) => {
+    switch (status) {
+      case "paid":
+        return "success";
+      case "pending":
+        return "warning";
+      case "overdue":
+        return "error";
+      case "draft":
+        return "default";
+      default:
+        return "default";
+    }
+  };
+
+  const formatCurrency = (amount) => {
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
+    }).format(amount);
+  };
+
+  if (loading) {
+    return <Loading />;
+  }
+
+  if (error) {
+    return <Error message={error} onRetry={loadInvoices} />;
+  }
+
+  if (invoices.length === 0) {
+    return (
+      <Empty
+        icon="CreditCard"
+        title="No invoices yet"
+        description="Create your first invoice to start tracking payments and revenue"
+        actionLabel="Create Invoice"
+        onAction={() => toast.info("Invoice creation coming soon!")}
+      />
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold text-white">{t("billing")}</h1>
+          <p className="text-gray-400 mt-1">
+            Manage invoices and track your revenue
+          </p>
+        </div>
+        <div className="flex items-center gap-4">
+          <Button variant="outline">
+            <ApperIcon name="Download" className="h-4 w-4 mr-2" />
+            Export
+          </Button>
+          <Button>
+            <ApperIcon name="Plus" className="h-4 w-4 mr-2" />
+            Create Invoice
+          </Button>
+        </div>
+      </div>
+
+      {/* Stats */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <StatCard
+          title="Total Revenue"
+          value={formatCurrency(getTotalRevenue())}
+          icon="DollarSign"
+          trend="up"
+          trendValue="+12.5%"
+        />
+        <StatCard
+          title="Pending Payments"
+          value={formatCurrency(getPendingAmount())}
+          icon="Clock"
+          trend="up"
+          trendValue="+8.3%"
+        />
+        <StatCard
+          title="Overdue Amount"
+          value={formatCurrency(getOverdueAmount())}
+          icon="AlertCircle"
+          trend="down"
+          trendValue="-2.1%"
+        />
+        <StatCard
+          title="Total Invoices"
+          value={invoices.length}
+          icon="FileText"
+          trend="up"
+          trendValue="+5"
+        />
+      </div>
+
+      {/* Invoices List */}
+      <div className="space-y-4">
+        {invoices.map((invoice) => (
+          <Card key={invoice.Id} className="p-6 hover:shadow-lg transition-all duration-200">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <div className="p-3 rounded-lg bg-gradient-to-r from-primary/20 to-secondary/20">
+                  <ApperIcon name="FileText" className="h-6 w-6 text-primary" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-white">
+                    Invoice #{invoice.number}
+                  </h3>
+                  <p className="text-sm text-gray-400">{invoice.contactName}</p>
+                  <div className="flex items-center gap-4 mt-1">
+                    <div className="flex items-center gap-1 text-xs text-gray-400">
+                      <ApperIcon name="Calendar" className="h-3 w-3" />
+                      Created: {format(new Date(invoice.createdAt), "MMM dd, yyyy")}
+                    </div>
+                    <div className="flex items-center gap-1 text-xs text-gray-400">
+                      <ApperIcon name="Clock" className="h-3 w-3" />
+                      Due: {format(new Date(invoice.dueDate), "MMM dd, yyyy")}
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="flex items-center gap-6">
+                <div className="text-right">
+                  <p className="text-xl font-bold text-white">
+                    {formatCurrency(invoice.total)}
+                  </p>
+                  <Badge variant={getStatusColor(invoice.status)} size="sm">
+                    {invoice.status}
+                  </Badge>
+                </div>
+                
+                <div className="flex items-center gap-2">
+                  <Button variant="ghost" size="sm">
+                    <ApperIcon name="Eye" className="h-4 w-4" />
+                  </Button>
+                  <Button variant="ghost" size="sm">
+                    <ApperIcon name="Edit" className="h-4 w-4" />
+                  </Button>
+                  <Button variant="ghost" size="sm">
+                    <ApperIcon name="Download" className="h-4 w-4" />
+                  </Button>
+                  <Button variant="ghost" size="sm">
+                    <ApperIcon name="Send" className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+            </div>
+            
+            {/* Invoice Items Summary */}
+            <div className="mt-4 pt-4 border-t border-white/10">
+              <div className="flex items-center justify-between text-sm">
+                <div className="flex items-center gap-4">
+                  <span className="text-gray-400">
+                    {invoice.items.length} item{invoice.items.length !== 1 ? "s" : ""}
+                  </span>
+                  {invoice.status === "paid" && invoice.paidAt && (
+                    <div className="flex items-center gap-1 text-success">
+                      <ApperIcon name="Check" className="h-3 w-3" />
+                      Paid on {format(new Date(invoice.paidAt), "MMM dd, yyyy")}
+                    </div>
+                  )}
+                </div>
+                
+                {invoice.status === "pending" && (
+                  <Button size="sm" variant="primary">
+                    <ApperIcon name="Send" className="h-4 w-4 mr-2" />
+                    Send Reminder
+                  </Button>
+                )}
+              </div>
+            </div>
+          </Card>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+export default Billing;

@@ -1,0 +1,110 @@
+[
+  {
+    "Id": 1,
+    "name": "Acme Corporation",
+    "company": "Acme Corp",
+    "email": "contact@acme.com",
+    "phone": "+1-555-0123",
+    "value": 25000,
+    "stage": "2",
+    "pipelineId": 1,
+    "ownerId": 1,
+    "owner": "John Doe",
+    "tags": ["enterprise", "hot"],
+    "lastActivity": "2024-01-15T10:30:00Z",
+    "customFields": {
+      "industry": "Technology",
+      "employees": "500-1000"
+    }
+  },
+  {
+    "Id": 2,
+    "name": "TechStart Inc",
+    "company": "TechStart",
+    "email": "hello@techstart.com",
+    "phone": "+1-555-0124",
+    "value": 15000,
+    "stage": "3",
+    "pipelineId": 1,
+    "ownerId": 2,
+    "owner": "Jane Smith",
+    "tags": ["startup", "warm"],
+    "lastActivity": "2024-01-14T14:20:00Z",
+    "customFields": {
+      "industry": "Software",
+      "employees": "10-50"
+    }
+  },
+  {
+    "Id": 3,
+    "name": "Global Industries",
+    "company": "Global Inc",
+    "email": "business@global.com",
+    "phone": "+1-555-0125",
+    "value": 45000,
+    "stage": "5",
+    "pipelineId": 1,
+    "ownerId": 1,
+    "owner": "John Doe",
+    "tags": ["enterprise", "qualified"],
+    "lastActivity": "2024-01-13T16:45:00Z",
+    "customFields": {
+      "industry": "Manufacturing",
+      "employees": "1000+"
+    }
+  },
+  {
+    "Id": 4,
+    "name": "InnovateCorp",
+    "company": "InnovateCorp",
+    "email": "sales@innovate.com",
+    "phone": "+1-555-0126",
+    "value": 30000,
+    "stage": "4",
+    "pipelineId": 1,
+    "ownerId": 2,
+    "owner": "Jane Smith",
+    "tags": ["mid-market", "demo"],
+    "lastActivity": "2024-01-12T09:15:00Z",
+    "customFields": {
+      "industry": "Healthcare",
+      "employees": "100-500"
+    }
+  },
+  {
+    "Id": 5,
+    "name": "Future Solutions",
+    "company": "Future Solutions",
+    "email": "info@futuresolutions.com",
+    "phone": "+1-555-0127",
+    "value": 20000,
+    "stage": "6",
+    "pipelineId": 1,
+    "ownerId": 1,
+    "owner": "John Doe",
+    "tags": ["negotiation", "hot"],
+    "lastActivity": "2024-01-11T11:30:00Z",
+    "customFields": {
+      "industry": "Consulting",
+      "employees": "50-100"
+    }
+  },
+  {
+    "Id": 6,
+    "name": "Prime Enterprises",
+    "company": "Prime Enterprises",
+    "email": "contact@prime.com",
+    "phone": "+1-555-0128",
+    "value": 35000,
+    "stage": "7",
+    "pipelineId": 1,
+    "ownerId": 2,
+    "owner": "Jane Smith",
+    "tags": ["won", "enterprise"],
+    "lastActivity": "2024-01-10T13:00:00Z",
+    "customFields": {
+      "industry": "Finance",
+      "employees": "500-1000"
+    }
+  }
+]

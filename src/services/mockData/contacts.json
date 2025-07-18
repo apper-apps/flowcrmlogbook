@@ -1,0 +1,92 @@
+[
+  {
+    "Id": 1,
+    "name": "John Smith",
+    "company": "Acme Corporation",
+    "email": "john.smith@acme.com",
+    "phone": "+1-555-0123",
+    "position": "CEO",
+    "status": "Active",
+    "lastActivity": "2024-01-15T10:30:00Z",
+    "tags": ["decision-maker", "enterprise"],
+    "customFields": {
+      "linkedin": "https://linkedin.com/in/johnsmith",
+      "notes": "Very interested in our enterprise solution"
+    }
+  },
+  {
+    "Id": 2,
+    "name": "Sarah Johnson",
+    "company": "TechStart Inc",
+    "email": "sarah@techstart.com",
+    "phone": "+1-555-0124",
+    "position": "CTO",
+    "status": "Active",
+    "lastActivity": "2024-01-14T14:20:00Z",
+    "tags": ["technical", "startup"],
+    "customFields": {
+      "linkedin": "https://linkedin.com/in/sarahjohnson",
+      "notes": "Needs technical demo"
+    }
+  },
+  {
+    "Id": 3,
+    "name": "Michael Brown",
+    "company": "Global Industries",
+    "email": "m.brown@global.com",
+    "phone": "+1-555-0125",
+    "position": "VP Sales",
+    "status": "Active",
+    "lastActivity": "2024-01-13T16:45:00Z",
+    "tags": ["champion", "enterprise"],
+    "customFields": {
+      "linkedin": "https://linkedin.com/in/michaelbrown",
+      "notes": "Internal champion, ready to move forward"
+    }
+  },
+  {
+    "Id": 4,
+    "name": "Emily Davis",
+    "company": "InnovateCorp",
+    "email": "emily.davis@innovate.com",
+    "phone": "+1-555-0126",
+    "position": "Marketing Director",
+    "status": "Pending",
+    "lastActivity": "2024-01-12T09:15:00Z",
+    "tags": ["warm", "mid-market"],
+    "customFields": {
+      "linkedin": "https://linkedin.com/in/emilydavis",
+      "notes": "Scheduled for demo next week"
+    }
+  },
+  {
+    "Id": 5,
+    "name": "David Wilson",
+    "company": "Future Solutions",
+    "email": "david@futuresolutions.com",
+    "phone": "+1-555-0127",
+    "position": "Operations Manager",
+    "status": "Active",
+    "lastActivity": "2024-01-11T11:30:00Z",
+    "tags": ["negotiation", "budget-holder"],
+    "customFields": {
+      "linkedin": "https://linkedin.com/in/davidwilson",
+      "notes": "Negotiating contract terms"
+    }
+  },
+  {
+    "Id": 6,
+    "name": "Lisa Anderson",
+    "company": "Prime Enterprises",
+    "email": "lisa.anderson@prime.com",
+    "phone": "+1-555-0128",
+    "position": "CFO",
+    "status": "Active",
+    "lastActivity": "2024-01-10T13:00:00Z",
+    "tags": ["decision-maker", "won"],
+    "customFields": {
+      "linkedin": "https://linkedin.com/in/lisaanderson",
+      "notes": "Deal closed successfully"
+    }
+  }
+]
