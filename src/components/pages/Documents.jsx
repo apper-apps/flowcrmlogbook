@@ -115,12 +115,14 @@ const Documents = () => {
         
         <div className="flex items-center gap-4">
           <div className="text-right">
-            <Badge variant={getStatusColor(document.status)} size="sm">
+<Badge variant={getStatusColor(document.status)} size="sm">
               {document.status}
             </Badge>
             {rowSize !== "small" && (
               <p className="text-xs text-gray-400 mt-1">
-                {format(new Date(document.createdAt), "MMM dd, yyyy")}
+                {document.createdAt && !isNaN(new Date(document.createdAt)) 
+                  ? format(new Date(document.createdAt), "MMM dd, yyyy")
+                  : "Date not available"}
               </p>
             )}
           </div>
